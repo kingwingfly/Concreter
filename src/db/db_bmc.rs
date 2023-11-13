@@ -34,15 +34,15 @@ impl DbBmc {
 
     pub fn add_node<S: Into<String>>(&self, value: S) -> DbResult<Vec<DbId>> {
         let node = Node::new(value);
-        let q = QueryBuilder::insert().nodes().values(&node).query();
+        let q = QueryBuilder::insert().element(&node).query();
         let db_ids = self.exec_mut(&q)?.ids();
         Ok(db_ids)
     }
 
     pub fn add_nodes<S: Into<String>>(&self, values: Vec<S>) -> DbResult<Vec<DbId>> {
         let nodes: Vec<Node> = values.into_iter().map(|name| Node::new(name)).collect();
-        let q = QueryBuilder::insert().nodes().values(&nodes).query();
-        let db_ids = self.exec_mut(&q)?;
+        let q = QueryBuilder::insert().elements(&nodes).query();
+        let db_ids = self.exec_mut(&q)?.ids();
         Ok(db_ids)
     }
 }
