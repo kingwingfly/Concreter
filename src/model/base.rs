@@ -1,10 +1,13 @@
-use agdb::{DbId, DbUserValue, QueryBuilder, QueryError, QueryIds};
+use agdb::{
+    DbId, DbUserValue, InsertEdgesQuery, InsertNodesQuery, InsertValuesQuery, QueryBuilder,
+    QueryError, QueryIds,
+};
 
 use crate::ctx::Ctx;
 
 use super::{DbResult, ModelManager};
 
-pub(super) trait AgdbNodeBmc {
+pub trait AgdbNodeBmc {
     const ALIAS: &'static str;
     type Node: DbUserValue;
 
@@ -12,35 +15,33 @@ pub(super) trait AgdbNodeBmc {
     where
         D: DbUserValue,
     {
-        let db_id = mm
-            .agdb_mut()
-            .transaction_mut(|t| -> Result<DbId, QueryError> {
-                match data.db_id() {
-                    Some(id) => {
-                        t.exec_mut(&QueryBuilder::insert().element(&data).query())?;
-                        Ok(id)
-                    }
-                    None => {
-                        let id = t
-                            .exec_mut(
-                                &QueryBuilder::insert()
-                                    .nodes()
-                                    .values(vec![data.to_db_values()])
-                                    .query(),
-                            )?
-                            .ids()[0];
-                        t.exec_mut(
+        match data.db_id() {
+            Some(id) => {
+                mm.agdb_mut()
+                    .exec_mut(&QueryBuilder::insert().element(&data).query())?;
+                Ok(id)
+            }
+            None => Ok(mm
+                .agdb_mut()
+                .transaction_mut(|t| -> Result<DbId, QueryError> {
+                    let id = t
+                        .exec_mut(
                             &QueryBuilder::insert()
-                                .edges()
-                                .from(Self::ALIAS)
-                                .to(id)
+                                .nodes()
+                                .values(vec![data.to_db_values()])
                                 .query(),
-                        )?;
-                        Ok(id)
-                    }
-                }
-            })?;
-        Ok(db_id)
+                        )?
+                        .ids()[0];
+                    t.exec_mut(
+                        &QueryBuilder::insert()
+                            .edges()
+                            .from(Self::ALIAS)
+                            .to(id)
+                            .query(),
+                    )?;
+                    Ok(id)
+                })?),
+        }
     }
 
     fn get<I>(_ctx: &Ctx, mm: &ModelManager, ids: I) -> DbResult<Vec<Self::Node>>
@@ -53,7 +54,7 @@ pub(super) trait AgdbNodeBmc {
     }
 }
 
-pub(super) trait AgdbEdgeBmc {
+pub trait AgdbEdgeBmc {
     const EDGE_NAME: &'static str;
 
     fn connect<I>(_ctx: &Ctx, mm: &mut ModelManager, from: I, to: I) -> DbResult<()>
