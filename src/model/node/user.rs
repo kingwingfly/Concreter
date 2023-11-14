@@ -1,8 +1,6 @@
-use agdb::{DbId, UserValue};
-
 use crate::model::base::AgdbNodeBmc;
-
 use crate::{impl_agdb_node_bmc, node_bmc_test};
+use agdb::{DbId, UserValue};
 
 #[derive(Debug, UserValue, Default)]
 pub struct User {
