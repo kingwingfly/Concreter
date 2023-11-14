@@ -66,7 +66,7 @@
 [![Product Name Screen Shot][product-screenshot]](https://github.com/kingwingfly/Concreter)
 
 ### The Graph Database
-![graph aliases](./image/graph aliases.png)
+![graph aliases](image/graph_aliases.png)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
