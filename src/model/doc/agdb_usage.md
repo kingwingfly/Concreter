@@ -127,7 +127,7 @@ QueryBuilder::insert().nodes().aliases(vec!["a", "b"]).values(vec![vec![("k", 1)
 QueryBuilder::insert().nodes().aliases(vec!["a", "b"]).values_uniform(vec![("k", "v").into(), (1, 10).into()]).query();
 QueryBuilder::insert().nodes().values(vec![vec![("k", 1).into()], vec![("k", 2).into()]]).query();
 ```
-The count is the number of nodes to be inserted into the database. It can be omitted (left 0) if either values or aliases (or both) are provided. If the values is `QueryValues::Single` you must provide either count or aliases. It is a logic error if the count cannot be inferred and is set to 0. If both values QueryValues::Multi and aliases are provided their lengths must match, otherwise it will result in a logic error. Empty alias ("") are not allowed. The values can be inferred from user defined types if they implement DbUserValue trait (#derive(agdb::UserValue)). Both singular nad vectorized versions are supported.
+The count is the number of nodes to be inserted into the database. It can be omitted (left 0) if either values or aliases (or both) are provided. If the values is `QueryValues::Single` you must provide either count or aliases. It is a logic error if the count cannot be inferred or is set to 0. If both values QueryValues::Multi and aliases are provided their lengths must match, otherwise it will result in a logic error. Empty alias ("") are not allowed. The values can be inferred from user defined types if they implement DbUserValue trait (#derive(agdb::UserValue)). Both singular nad vectorized versions are supported.
 
 ### Insert aliases
 ```rust

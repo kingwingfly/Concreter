@@ -1,5 +1,4 @@
-mod db;
+mod ctx;
+mod model;
 
-fn main() {
-    db::hello();
-}
+fn main() {}
