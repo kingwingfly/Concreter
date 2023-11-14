@@ -4,7 +4,7 @@ use crate::ctx::Ctx;
 
 use super::{DbResult, ModelManager};
 
-pub(super) trait AgdbBmc {
+pub(super) trait AgdbNodeBmc {
     const ALIAS: &'static str;
     type Node: DbUserValue;
 
@@ -50,6 +50,29 @@ pub(super) trait AgdbBmc {
         let q = QueryBuilder::select().ids(ids).query();
         let node = mm.agdb().exec(&q)?.try_into()?;
         Ok(node)
+    }
+}
+
+pub(super) trait AgdbEdgeBmc {
+    const EDGE_NAME: &'static str;
+
+    fn connect<I>(_ctx: &Ctx, mm: &mut ModelManager, from: I, to: I) -> DbResult<()>
+    where
+        I: Into<QueryIds> + Copy,
+    {
+        mm.agdb_mut()
+            .transaction_mut(|t| -> Result<(), QueryError> {
+                t.exec_mut(
+                    &QueryBuilder::insert()
+                        .edges()
+                        .from(from)
+                        .to(to)
+                        .values_uniform(vec![(Self::EDGE_NAME, 1).into()])
+                        .query(),
+                )?;
+                Ok(())
+            })?;
+        Ok(())
     }
 }
 

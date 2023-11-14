@@ -1,17 +1,16 @@
 mod base;
+mod edge;
 mod macros;
-
-mod article;
-mod comment;
-mod formula;
-mod user;
-mod word;
+mod node;
 
 mod error;
 
 use agdb::{Db, QueryBuilder, QueryError};
 
+pub use base::*;
+pub use edge::*;
 pub use error::*;
+pub use node::*;
 
 pub struct ModelManager {
     db: Db,
@@ -41,7 +40,7 @@ impl ModelManager {
 
 fn init_agdb(db: &mut Db) -> DbResult<()> {
     Ok(db.transaction_mut(|t| -> Result<(), QueryError> {
-        for name in vec!["root", "articles", "users", "words", "formulas", "comments"] {
+        for name in ["root", "articles", "users", "words", "formulas", "comments"] {
             match t.exec_mut(&QueryBuilder::insert().nodes().aliases(name).query()) {
                 Ok(_) => {
                     t.exec_mut(&QueryBuilder::insert().edges().from("root").to(name).query())?;
