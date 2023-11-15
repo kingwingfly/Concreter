@@ -17,10 +17,10 @@ macro_rules! node_bmc_test {
             use $crate::ctx::Ctx;
             use $crate::model::ModelManager;
 
-            #[test]
-            fn node_test() {
+            #[tokio::test]
+            async fn node_test() {
                 let ctx = Ctx::root_user();
-                let mut mm = ModelManager::new().unwrap();
+                let mut mm = ModelManager::new().await.unwrap();
                 let node = $node::default();
                 let db_id = $bmc::update(&ctx, &mut mm, node).unwrap();
                 let id = db_id.clone();
@@ -59,10 +59,10 @@ macro_rules! edge_bmc_test {
             use $crate::model::ModelManager;
             use $crate::model::{$self, $self_bmc};
 
-            #[test]
-            fn edge_test() {
+            #[tokio::test]
+            async fn edge_test() {
                 let ctx = Ctx::root_user();
-                let mut mm = ModelManager::new().unwrap();
+                let mut mm = ModelManager::new().await.unwrap();
                 let node1 = $self::default();
                 let id1 = $self_bmc::update(&ctx, &mut mm, node1).unwrap();
                 let node2 = $self::default();
@@ -81,10 +81,10 @@ macro_rules! edge_bmc_test {
             use $crate::model::ModelManager;
             use $crate::model::{$from, $from_bmc, $to, $to_bmc};
 
-            #[test]
-            fn edge_test() {
+            #[tokio::test]
+            async fn edge_test() {
                 let ctx = Ctx::root_user();
-                let mut mm = ModelManager::new().unwrap();
+                let mut mm = ModelManager::new().await.unwrap();
                 let node1 = $from::default();
                 let id1 = $from_bmc::update(&ctx, &mut mm, node1).unwrap();
                 let node2 = $to::default();
