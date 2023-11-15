@@ -1,0 +1,12 @@
+[package]
+name = "concreter"
+version = "0.0.1"
+authors = ["Louis <836250617@qq.com>"]
+edition = "2021"
+
+[dependencies]
+agdb = {vserion = "0.5.1", features = []}
+sqlx = {version = "0.7", features = ["runtime-tokio", "tls-rustls", "postgres"]}
+tokio = {version = "1", features = ["full"]}
+dotenv = "0.15.0"
+snafu = {version = "0.7.5", features = ["std", "rust_1_61"]}
