@@ -110,7 +110,7 @@ pg_ctl -D /path/to/pgdata stop
 rm -rf /path/to/pgdata
 ```
 
-If you wanana use Postgres on docker, you can follow the steps below.
+If you wanana use Postgres with docker, you can follow the steps below.
 ```sh
 docker run --name postgres -e POSTGRES_PASSWORD=password -p 5432:5432 -d postgres
 

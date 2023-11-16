@@ -12,26 +12,24 @@ pub use node::*;
 
 use agdb::{Db, QueryBuilder, QueryError};
 use sqlx::postgres::{PgPool, PgPoolOptions};
+use std::sync::{Arc, RwLock};
 
+#[derive(Clone)]
 pub struct ModelManager {
-    agdb: Db,
+    agdb: Arc<RwLock<Db>>,
     pgdb: PgPool,
 }
 
 impl ModelManager {
     pub async fn new() -> DbResult<Self> {
         Ok(Self {
-            agdb: init_agdb()?,
+            agdb: Arc::new(RwLock::new(init_agdb()?)),
             pgdb: init_pgdb().await?,
         })
     }
 
-    fn agdb(&self) -> &Db {
-        &self.agdb
-    }
-
-    fn agdb_mut(&mut self) -> &mut Db {
-        &mut self.agdb
+    fn agdb(&self) -> Arc<RwLock<Db>> {
+        self.agdb.clone()
     }
 
     fn pgdb(&self) -> &PgPool {
@@ -78,13 +76,16 @@ async fn init_pgdb() -> DbResult<PgPool> {
 #[cfg(test)]
 mod create_mm_test {
     use super::*;
+    use serial_test::serial;
 
     #[test]
+    #[serial]
     fn agdb_init_test() {
         init_agdb().unwrap();
     }
 
     #[tokio::test]
+    #[serial]
     async fn pgdb_init_test() {
         init_pgdb().await.unwrap();
     }

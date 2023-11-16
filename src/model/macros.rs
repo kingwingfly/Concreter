@@ -14,13 +14,13 @@ macro_rules! node_bmc_test {
         #[cfg(test)]
         mod node_tests {
             use super::*;
+            use $crate::_dev_utils::init_test;
             use $crate::ctx::Ctx;
-            use $crate::model::ModelManager;
 
             #[tokio::test]
             async fn node_test() {
                 let ctx = Ctx::root_user();
-                let mut mm = ModelManager::new().await.unwrap();
+                let mut mm = init_test().await;
                 let node = $node::default();
                 let db_id = $bmc::update(&ctx, &mut mm, node).unwrap();
                 let id = db_id.clone();
@@ -54,15 +54,15 @@ macro_rules! edge_bmc_test {
         #[cfg(test)]
         mod edge_tests {
             use super::*;
+            use $crate::_dev_utils::init_test;
             use $crate::ctx::Ctx;
             use $crate::model::AgdbNodeBmc;
-            use $crate::model::ModelManager;
             use $crate::model::{$self, $self_bmc};
 
             #[tokio::test]
             async fn edge_test() {
                 let ctx = Ctx::root_user();
-                let mut mm = ModelManager::new().await.unwrap();
+                let mut mm = init_test().await;
                 let node1 = $self::default();
                 let id1 = $self_bmc::update(&ctx, &mut mm, node1).unwrap();
                 let node2 = $self::default();
@@ -76,15 +76,15 @@ macro_rules! edge_bmc_test {
         #[cfg(test)]
         mod edge_tests {
             use super::*;
+            use $crate::_dev_utils::init_test;
             use $crate::ctx::Ctx;
             use $crate::model::AgdbNodeBmc;
-            use $crate::model::ModelManager;
             use $crate::model::{$from, $from_bmc, $to, $to_bmc};
 
             #[tokio::test]
             async fn edge_test() {
                 let ctx = Ctx::root_user();
-                let mut mm = ModelManager::new().await.unwrap();
+                let mut mm = init_test().await;
                 let node1 = $from::default();
                 let id1 = $from_bmc::update(&ctx, &mut mm, node1).unwrap();
                 let node2 = $to::default();
