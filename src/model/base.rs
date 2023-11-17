@@ -84,6 +84,7 @@ pub trait AgdbEdgeBmc {
 }
 
 pub trait PgdbBmc {
+    /// The table name in the database which changes will perform on
     const TABLE: &'static str;
 
     async fn insert<D>(_ctx: &Ctx, mm: &ModelManager, data: D) -> DbResult<i64>
@@ -109,6 +110,7 @@ pub trait PgdbBmc {
         Ok(id)
     }
 
+    /// Return the first row of the table matching the field=value
     async fn first_by<D, F, V>(_ctx: &Ctx, mm: &ModelManager, field: F, value: V) -> DbResult<D>
     where
         for<'r> D: FromRow<'r, PgRow> + Send + Sync + Unpin,
@@ -127,6 +129,7 @@ pub trait PgdbBmc {
         .await?)
     }
 
+    /// Delete the rows matching the field=value
     async fn delete_by<F, V>(_ctx: &Ctx, mm: &ModelManager, field: F, value: V) -> DbResult<()>
     where
         F: AsRef<str>,
@@ -143,6 +146,7 @@ pub trait PgdbBmc {
         Ok(())
     }
 
+    /// Update the rows according to origin's id, and only update field to new_value
     async fn update_one_field<D, F, V>(
         _ctx: &Ctx,
         mm: &ModelManager,
@@ -170,7 +174,10 @@ pub trait PgdbBmc {
 }
 
 pub trait Field {
+    /// Return the field names, which will be used in SQL query when insert.
     fn keys(&self) -> Vec<String>;
+    /// Return the field values, which matched the keys.
     fn values(&self) -> Vec<String>;
+    /// Return the id of the row in the database
     fn pg_id(&self) -> i64;
 }

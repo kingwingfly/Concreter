@@ -18,6 +18,11 @@ pub fn test_rt() -> &'static tokio::runtime::Runtime {
     &RT
 }
 
+/// All the test about database should be run in this function.
+/// Because we need to share the same database connection,
+/// which cannot keep alive between runtimes.
+/// In other words, if the database connection is closed
+/// due to the end of the runtime which initialized it, the next runtimes will fail.
 pub fn run_test<F: std::future::Future>(f: F) -> F::Output {
     test_rt().block_on(f)
 }
