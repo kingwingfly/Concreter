@@ -4,8 +4,8 @@ use sqlx::{postgres::PgConnectOptions, ConnectOptions, PgConnection};
 use tracing::info;
 use url::Url;
 
-const PG_DEV_POSTGRES_URL: &str = "postgres://postgres:postgres@localhost/postgres";
-const PG_DEV_APP_URL: &str = "postgres://app_user:dev_only_pwd@localhost/app_db";
+const PG_DEV_POSTGRES_URL: &str = "postgres://postgres:postgres@localhost:5432/postgres";
+const PG_DEV_APP_URL: &str = "postgres://app_user:dev_only_pwd@localhost:5432/app_db";
 
 const SQL_CREATEDB_FILE_NAME: &str = "00-createdb.sql";
 const SQL_DIR: &str = "sql/dev_init";

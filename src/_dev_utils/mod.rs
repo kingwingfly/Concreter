@@ -1,7 +1,26 @@
 mod dev_db;
 
+use lazy_static::lazy_static;
 use tokio::sync::OnceCell;
 use tracing::info;
+
+pub fn test_rt() -> &'static tokio::runtime::Runtime {
+    lazy_static! {
+        static ref RT: tokio::runtime::Runtime = {
+            let rt = tokio::runtime::Builder::new_current_thread()
+                .enable_all()
+                .build()
+                .unwrap();
+            rt.block_on(init_test());
+            rt
+        };
+    }
+    &RT
+}
+
+pub fn run_test<F: std::future::Future>(f: F) -> F::Output {
+    test_rt().block_on(f)
+}
 
 use crate::model::ModelManager;
 

@@ -31,8 +31,8 @@ impl ModelManager {
         })
     }
 
-    fn agdb(&self) -> Arc<RwLock<Db>> {
-        self.agdb.clone()
+    fn agdb(&self) -> &Arc<RwLock<Db>> {
+        &self.agdb
     }
 
     fn pgdb(&self) -> &PgPool {
@@ -74,19 +74,4 @@ async fn init_pgdb() -> DbResult<PgPool> {
         .connect(&url)
         .await?;
     Ok(pool)
-}
-
-#[cfg(test)]
-mod create_mm_test {
-    use super::*;
-
-    #[test]
-    fn agdb_init_test() {
-        init_agdb().unwrap();
-    }
-
-    #[tokio::test]
-    async fn pgdb_init_test() {
-        init_pgdb().await.unwrap();
-    }
 }

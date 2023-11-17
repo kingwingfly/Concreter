@@ -56,36 +56,41 @@ impl PgdbBmc for UserPgBmc {
 
 #[cfg(test)]
 mod pg_tests {
-    use crate::{_dev_utils, ctx::Ctx};
+    use crate::{
+        _dev_utils::{init_test, run_test},
+        ctx::Ctx,
+    };
 
     use super::*;
 
-    #[tokio::test]
-    async fn pg_test() {
-        let ctx = Ctx::root_user();
-        let mm = _dev_utils::init_test().await;
-        let user: UserPg = UserPgBmc::first_by(&ctx, &mm, "username", "demo1")
-            .await
-            .unwrap();
-        assert_eq!(user.username, "demo1");
-        assert_eq!(user.id, 1000);
-        UserPgBmc::update_one_field(&ctx, &mm, user, "pwd", "123456")
-            .await
-            .unwrap();
-        let user: UserPg = UserPgBmc::first_by(&ctx, &mm, "username", "demo1")
-            .await
-            .unwrap();
-        assert_eq!(user.pwd, Some("123456".to_string()));
-        let user = UserPgNew {
-            username: "louis".to_string(),
-            pwd: "123456".to_string(),
-        };
-        let id = UserPgBmc::insert(&ctx, &mm, user).await.unwrap();
-        let user: UserPg = UserPgBmc::first_by(&ctx, &mm, "id", id).await.unwrap();
-        assert_eq!(user.username, "louis");
-        UserPgBmc::delete_by(&ctx, &mm, "id", id).await.unwrap();
-        assert!(UserPgBmc::first_by::<UserPg, _, _>(&ctx, &mm, "id", id)
-            .await
-            .is_err());
+    #[test]
+    fn pg_test() {
+        run_test(async {
+            let ctx = Ctx::root_user();
+            let mm = init_test().await;
+            let user: UserPg = UserPgBmc::first_by(&ctx, &mm, "username", "demo1")
+                .await
+                .unwrap();
+            assert_eq!(user.username, "demo1");
+            assert_eq!(user.id, 1000);
+            UserPgBmc::update_one_field(&ctx, &mm, user, "pwd", "123456")
+                .await
+                .unwrap();
+            let user: UserPg = UserPgBmc::first_by(&ctx, &mm, "username", "demo1")
+                .await
+                .unwrap();
+            assert_eq!(user.pwd, Some("123456".to_string()));
+            let user = UserPgNew {
+                username: "louis".to_string(),
+                pwd: "123456".to_string(),
+            };
+            let id = UserPgBmc::insert(&ctx, &mm, user).await.unwrap();
+            let user: UserPg = UserPgBmc::first_by(&ctx, &mm, "id", id).await.unwrap();
+            assert_eq!(user.username, "louis");
+            UserPgBmc::delete_by(&ctx, &mm, "id", id).await.unwrap();
+            assert!(UserPgBmc::first_by::<UserPg, _, _>(&ctx, &mm, "id", id)
+                .await
+                .is_err());
+        });
     }
 }

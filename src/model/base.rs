@@ -21,7 +21,6 @@ pub trait AgdbNodeBmc {
                     .exec_mut(&QueryBuilder::insert().element(&data).query())?;
                 Ok(id)
             }
-
             None => {
                 Ok(mm
                     .agdb()
@@ -116,6 +115,8 @@ pub trait PgdbBmc {
         F: AsRef<str>,
         for<'q> V: Send + Encode<'q, Postgres> + Type<Postgres>,
     {
+        mm.pgdb().acquire().await.unwrap();
+
         Ok(sqlx::query_as(&format!(
             "SELECT * FROM {} WHERE {} = $1 LIMIT 1",
             Self::TABLE,
