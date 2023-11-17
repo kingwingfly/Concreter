@@ -1,15 +1,15 @@
-use crate::model::base::AgdbNodeBmc;
+use super::base::AgdbNodeBmc;
 use crate::{impl_agdb_node_bmc, node_bmc_test};
 use agdb::{DbId, UserValue};
 
 #[derive(Debug, UserValue, Default)]
-pub struct Formula {
+pub struct FormulaAg {
     db_id: Option<DbId>,
-    content: String,
+    pg_id: i64,
 }
 
-pub struct FormulaBmc;
+pub struct FormulaAgBmc;
 
-impl_agdb_node_bmc!(FormulaBmc, Formula, "formulas");
+impl_agdb_node_bmc!(FormulaAgBmc, FormulaAg, "formulas");
 
-node_bmc_test!(FormulaBmc, Formula, "formulas");
+node_bmc_test!(FormulaAgBmc, FormulaAg, "formulas");

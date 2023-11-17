@@ -1,15 +1,15 @@
-use crate::model::base::AgdbNodeBmc;
+use super::base::AgdbNodeBmc;
 use crate::{impl_agdb_node_bmc, node_bmc_test};
 use agdb::{DbId, UserValue};
 
 #[derive(Debug, UserValue, Default)]
-pub struct User {
+pub struct UserAg {
     db_id: Option<DbId>,
-    content: String,
+    pg_id: i64,
 }
 
-pub struct UserBmc;
+pub struct UserAgBmc;
 
-impl_agdb_node_bmc!(UserBmc, User, "users");
+impl_agdb_node_bmc!(UserAgBmc, UserAg, "users");
 
-node_bmc_test!(UserBmc, User, "users");
+node_bmc_test!(UserAgBmc, UserAg, "users");

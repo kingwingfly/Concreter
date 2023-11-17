@@ -2,6 +2,7 @@ mod base;
 mod edge;
 mod macros;
 mod node;
+mod pg;
 
 mod error;
 
@@ -9,10 +10,12 @@ pub use base::*;
 pub use edge::*;
 pub use error::*;
 pub use node::*;
+pub use pg::*;
 
 use agdb::{Db, QueryBuilder, QueryError};
 use sqlx::postgres::{PgPool, PgPoolOptions};
-use std::sync::{Arc, RwLock};
+use std::sync::Arc;
+use tokio::sync::RwLock;
 
 #[derive(Clone)]
 pub struct ModelManager {
@@ -66,7 +69,7 @@ async fn init_pgdb() -> DbResult<PgPool> {
     let url = std::env::var("PgUrl")?;
     let pool = PgPoolOptions::new()
         .idle_timeout(std::time::Duration::from_secs(60))
-        .acquire_timeout(std::time::Duration::from_secs(5))
+        .acquire_timeout(std::time::Duration::from_secs(2))
         .max_connections(4)
         .connect(&url)
         .await?;
@@ -76,16 +79,13 @@ async fn init_pgdb() -> DbResult<PgPool> {
 #[cfg(test)]
 mod create_mm_test {
     use super::*;
-    use serial_test::serial;
 
     #[test]
-    #[serial]
     fn agdb_init_test() {
         init_agdb().unwrap();
     }
 
     #[tokio::test]
-    #[serial]
     async fn pgdb_init_test() {
         init_pgdb().await.unwrap();
     }

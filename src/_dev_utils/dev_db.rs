@@ -1,6 +1,7 @@
 use std::{fs, path::PathBuf};
 
 use sqlx::{postgres::PgConnectOptions, ConnectOptions, PgConnection};
+use tracing::info;
 use url::Url;
 
 const PG_DEV_POSTGRES_URL: &str = "postgres://postgres:postgres@localhost/postgres";
@@ -35,7 +36,7 @@ pub async fn init_dev_db() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 async fn pexe(con: &mut PgConnection, filepath: PathBuf) -> Result<(), Box<dyn std::error::Error>> {
-    println!("Executing {}", filepath.to_string_lossy());
+    info!("Executing {}", filepath.to_string_lossy());
     let sqls = std::fs::read_to_string(filepath)?;
     for sql in sqls.split(';') {
         sqlx::query(sql.trim()).execute(&mut *con).await?;

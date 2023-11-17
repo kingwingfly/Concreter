@@ -22,18 +22,18 @@ macro_rules! node_bmc_test {
                 let ctx = Ctx::root_user();
                 let mut mm = init_test().await;
                 let node = $node::default();
-                let db_id = $bmc::update(&ctx, &mut mm, node).unwrap();
+                let db_id = $bmc::update(&ctx, &mut mm, node).await.unwrap();
                 let id = db_id.clone();
-                let mut node = $bmc::get(&ctx, &mm, db_id).unwrap();
+                let mut node = $bmc::get(&ctx, &mm, db_id).await.unwrap();
                 assert_eq!(node.len(), 1);
-                assert_eq!(node[0].content, "");
+                assert_eq!(node[0].pg_id, 0);
                 let mut node = node.pop().unwrap();
-                node.content = "hello".to_string();
-                let db_id = $bmc::update(&ctx, &mut mm, node).unwrap();
+                node.pg_id = 1;
+                let db_id = $bmc::update(&ctx, &mut mm, node).await.unwrap();
                 assert_eq!(db_id, id);
-                let node = $bmc::get(&ctx, &mm, db_id).unwrap();
+                let node = $bmc::get(&ctx, &mm, db_id).await.unwrap();
                 assert_eq!(node.len(), 1);
-                assert_eq!(node[0].content, "hello");
+                assert_eq!(node[0].pg_id, 1);
             }
         }
     };
@@ -64,10 +64,10 @@ macro_rules! edge_bmc_test {
                 let ctx = Ctx::root_user();
                 let mut mm = init_test().await;
                 let node1 = $self::default();
-                let id1 = $self_bmc::update(&ctx, &mut mm, node1).unwrap();
+                let id1 = $self_bmc::update(&ctx, &mut mm, node1).await.unwrap();
                 let node2 = $self::default();
-                let id2 = $self_bmc::update(&ctx, &mut mm, node2).unwrap();
-                $edge_bmc::connect(&ctx, &mut mm, id1, id2).unwrap();
+                let id2 = $self_bmc::update(&ctx, &mut mm, node2).await.unwrap();
+                $edge_bmc::connect(&ctx, &mut mm, id1, id2).await.unwrap();
             }
         }
     };
@@ -86,10 +86,10 @@ macro_rules! edge_bmc_test {
                 let ctx = Ctx::root_user();
                 let mut mm = init_test().await;
                 let node1 = $from::default();
-                let id1 = $from_bmc::update(&ctx, &mut mm, node1).unwrap();
+                let id1 = $from_bmc::update(&ctx, &mut mm, node1).await.unwrap();
                 let node2 = $to::default();
-                let id2 = $to_bmc::update(&ctx, &mut mm, node2).unwrap();
-                $edge_bmc::connect(&ctx, &mut mm, id1, id2).unwrap();
+                let id2 = $to_bmc::update(&ctx, &mut mm, node2).await.unwrap();
+                $edge_bmc::connect(&ctx, &mut mm, id1, id2).await.unwrap();
             }
         }
     };
