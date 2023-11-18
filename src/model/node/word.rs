@@ -1,15 +1,15 @@
-use crate::model::base::AgdbNodeBmc;
+use super::base::AgdbNodeBmc;
 use crate::{impl_agdb_node_bmc, node_bmc_test};
 use agdb::{DbId, UserValue};
 
 #[derive(Debug, UserValue, Default)]
-pub struct Word {
+pub struct WordAg {
     db_id: Option<DbId>,
-    content: String,
+    pg_id: i64,
 }
 
-pub struct WordBmc;
+pub struct WordAgBmc;
 
-impl_agdb_node_bmc!(WordBmc, Word, "words");
+impl_agdb_node_bmc!(WordAgBmc, WordAg, "words");
 
-node_bmc_test!(WordBmc, Word, "words");
+node_bmc_test!(WordAgBmc, WordAg, "words");

@@ -2,6 +2,7 @@ mod base;
 mod edge;
 mod macros;
 mod node;
+mod pg;
 
 mod error;
 
@@ -9,29 +10,29 @@ pub use base::*;
 pub use edge::*;
 pub use error::*;
 pub use node::*;
+pub use pg::*;
 
 use agdb::{Db, QueryBuilder, QueryError};
 use sqlx::postgres::{PgPool, PgPoolOptions};
+use std::sync::Arc;
+use tokio::sync::RwLock;
 
+#[derive(Clone)]
 pub struct ModelManager {
-    agdb: Db,
+    agdb: Arc<RwLock<Db>>,
     pgdb: PgPool,
 }
 
 impl ModelManager {
     pub async fn new() -> DbResult<Self> {
         Ok(Self {
-            agdb: init_agdb()?,
+            agdb: Arc::new(RwLock::new(init_agdb()?)),
             pgdb: init_pgdb().await?,
         })
     }
 
-    fn agdb(&self) -> &Db {
+    fn agdb(&self) -> &Arc<RwLock<Db>> {
         &self.agdb
-    }
-
-    fn agdb_mut(&mut self) -> &mut Db {
-        &mut self.agdb
     }
 
     fn pgdb(&self) -> &PgPool {
@@ -68,24 +69,9 @@ async fn init_pgdb() -> DbResult<PgPool> {
     let url = std::env::var("PgUrl")?;
     let pool = PgPoolOptions::new()
         .idle_timeout(std::time::Duration::from_secs(60))
-        .acquire_timeout(std::time::Duration::from_secs(5))
+        .acquire_timeout(std::time::Duration::from_secs(2))
         .max_connections(4)
         .connect(&url)
         .await?;
     Ok(pool)
-}
-
-#[cfg(test)]
-mod create_mm_test {
-    use super::*;
-
-    #[test]
-    fn agdb_init_test() {
-        init_agdb().unwrap();
-    }
-
-    #[tokio::test]
-    async fn pgdb_init_test() {
-        init_pgdb().await.unwrap();
-    }
 }

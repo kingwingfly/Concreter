@@ -1,0 +1,1 @@
+[k8s app tutorial](https://kubernetes.io/docs/tutorials/stateless-application/expose-external-ip-address/)
