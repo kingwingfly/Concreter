@@ -104,7 +104,10 @@ pub trait PgdbBmc {
         sql.push_str(") RETURNING id");
         let mut q = sqlx::query(&sql);
         for v in data.values() {
-            q = q.bind(v);
+            match v {
+                Value::Int(v) => q = q.bind(v),
+                Value::String(v) => q = q.bind(v),
+            }
         }
         let id = q.fetch_one(mm.pgdb()).await?.try_get(0)?;
         Ok(id)
@@ -173,11 +176,16 @@ pub trait PgdbBmc {
     }
 }
 
+pub enum Value {
+    Int(i64),
+    String(String),
+}
+
 pub trait Field {
     /// Return the field names, which will be used in SQL query when insert.
     fn keys(&self) -> Vec<String>;
     /// Return the field values, which matched the keys.
-    fn values(&self) -> Vec<String>;
+    fn values(&self) -> Vec<Value>;
     /// Return the id of the row in the database
     fn pg_id(&self) -> i64;
 }

@@ -1,3 +1,5 @@
+use crate::model::Value;
+
 use super::base::{Field, PgdbBmc};
 
 use sqlx::FromRow;
@@ -8,6 +10,8 @@ pub struct ArticlePg {
     author: i64,
     title: String,
     content: String,
+    created_at: chrono::DateTime<chrono::Local>,
+    updated_at: chrono::DateTime<chrono::Local>,
 }
 
 impl Field for ArticlePg {
@@ -15,11 +19,11 @@ impl Field for ArticlePg {
         self.id
     }
 
-    fn values(&self) -> Vec<String> {
+    fn values(&self) -> Vec<Value> {
         vec![
-            format!("{}", self.author),
-            self.title.to_owned(),
-            self.content.to_owned(),
+            Value::Int(self.author),
+            Value::String(self.title.to_owned()),
+            Value::String(self.content.to_owned()),
         ]
     }
 
@@ -43,11 +47,11 @@ impl Field for ArticleNew {
         0
     }
 
-    fn values(&self) -> Vec<String> {
+    fn values(&self) -> Vec<Value> {
         vec![
-            format!("{}", self.author),
-            self.title.to_owned(),
-            self.content.to_owned(),
+            Value::Int(self.author),
+            Value::String(self.title.to_owned()),
+            Value::String(self.content.to_owned()),
         ]
     }
 
@@ -80,9 +84,7 @@ mod pg_tests {
         run_test(async {
             let ctx = Ctx::root_user();
             let mm = init_test().await;
-            let article: ArticlePg = ArticlePgBmc::first_by(&ctx, &mm, "author", 1000)
-                .await
-                .unwrap();
+            let article: ArticlePg = ArticlePgBmc::first_by(&ctx, &mm, "id", 1000).await.unwrap();
             assert_eq!(article.author, 1000);
             assert_eq!(article.content, "hello world");
             ArticlePgBmc::update_one_field(&ctx, &mm, article, "content", "hello louis")

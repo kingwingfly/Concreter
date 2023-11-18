@@ -1,3 +1,5 @@
+use crate::model::Value;
+
 use super::base::{Field, PgdbBmc};
 
 use sqlx::FromRow;
@@ -17,10 +19,10 @@ impl Field for UserPg {
         self.id
     }
 
-    fn values(&self) -> Vec<String> {
+    fn values<'a>(&self) -> Vec<Value> {
         vec![
-            self.username.to_owned(),
-            self.pwd.as_ref().unwrap().to_owned(),
+            Value::String(self.username.to_owned()),
+            Value::String(self.pwd.as_ref().unwrap_or(&"".to_string()).to_owned()),
         ]
     }
 
@@ -39,8 +41,11 @@ impl Field for UserPgNew {
         0
     }
 
-    fn values(&self) -> Vec<String> {
-        vec![self.username.to_owned(), self.pwd.to_owned()]
+    fn values(&self) -> Vec<Value> {
+        vec![
+            Value::String(self.username.to_owned()),
+            Value::String(self.pwd.to_owned()),
+        ]
     }
 
     fn keys(&self) -> Vec<String> {

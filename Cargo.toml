@@ -5,8 +5,8 @@ authors = ["Louis <836250617@qq.com>"]
 edition = "2021"
 
 [dependencies]
-agdb = {vserion = "0.5.1", features = []}
-sqlx = {version = "0.7", features = ["runtime-tokio-rustls", "postgres", "macros", "uuid"]}
+agdb = {version = "0.5.1", features = []}
+sqlx = {version = "0.7", features = ["runtime-tokio-rustls", "postgres", "macros", "uuid", "chrono"]}
 tokio = {version = "1", features = ["full"]}
 dotenv = "0.15.0"
 snafu = {version = "0.7.5", features = ["std", "rust_1_61"]}
@@ -15,5 +15,6 @@ tracing-subscriber = "0.3.18"
 url = "2.4.1"
 uuid = "1.5.0"
 lazy_static = "1.4.0"
+chrono = {vesion = "0.4", features = []}
 
 [dev-dependencies]

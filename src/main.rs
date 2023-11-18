@@ -1,3 +1,5 @@
+#![feature(trait_alias)]
+
 mod ctx;
 mod model;
 
