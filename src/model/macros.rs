@@ -25,7 +25,7 @@ macro_rules! node_bmc_test {
             #[test]
             fn node_test() {
                 run_test(async {
-                    let ctx = Ctx::root_user();
+                    let ctx = Ctx::root_ctx();
                     let mut mm = init_test().await;
                     let node = $node::default();
                     let db_id = $bmc::update(&ctx, &mut mm, node).await.unwrap();
@@ -76,7 +76,7 @@ macro_rules! edge_bmc_test {
             #[test]
             fn edge_test() {
                 run_test(async {
-                    let ctx = Ctx::root_user();
+                    let ctx = Ctx::root_ctx();
                     let mut mm = init_test().await;
                     let node1 = $self::default();
                     let id1 = $self_bmc::update(&ctx, &mut mm, node1).await.unwrap();
@@ -100,7 +100,7 @@ macro_rules! edge_bmc_test {
             #[test]
             fn edge_test() {
                 run_test(async {
-                    let ctx = Ctx::root_user();
+                    let ctx = Ctx::root_ctx();
                     let mut mm = init_test().await;
                     let node1 = $from::default();
                     let id1 = $from_bmc::update(&ctx, &mut mm, node1).await.unwrap();

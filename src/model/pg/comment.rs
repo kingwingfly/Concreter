@@ -6,13 +6,13 @@ use sqlx::FromRow;
 
 #[derive(FromRow)]
 pub struct CommentPg {
-    id: i64,
-    author: i64,
-    content: String,
-    article: i64,
-    parent_comment: Option<i64>,
-    created_at: chrono::DateTime<chrono::Local>,
-    updated_at: chrono::DateTime<chrono::Local>,
+    pub id: i64,
+    pub author: i64,
+    pub content: String,
+    pub article: i64,
+    pub parent_comment: Option<i64>,
+    pub created_at: chrono::DateTime<chrono::Local>,
+    pub updated_at: chrono::DateTime<chrono::Local>,
 }
 
 impl Field for CommentPg {
@@ -78,15 +78,19 @@ mod pg_tests {
     #[test]
     fn pg_test() {
         run_test(async {
-            let ctx = Ctx::root_user();
+            let ctx = Ctx::root_ctx();
             let mm = init_test().await;
-            let comment: CommentPg = CommentPgBmc::first_by(&ctx, &mm, "id", 1).await.unwrap();
+            let comment: CommentPg = CommentPgBmc::first_by(&ctx, &mm, "id", 1 as i64)
+                .await
+                .unwrap();
             assert_eq!(comment.author, 1000);
             assert_eq!(comment.content, "hello world");
             CommentPgBmc::update_one_field(&ctx, &mm, comment, "content", "hello louis")
                 .await
                 .unwrap();
-            let comment: CommentPg = CommentPgBmc::first_by(&ctx, &mm, "id", 1).await.unwrap();
+            let comment: CommentPg = CommentPgBmc::first_by(&ctx, &mm, "id", 1 as i64)
+                .await
+                .unwrap();
             assert_eq!(comment.content, "hello louis".to_string());
             let comment = CommentNew {
                 author: 1000,

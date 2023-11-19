@@ -6,12 +6,12 @@ use sqlx::FromRow;
 
 #[derive(FromRow)]
 pub struct ArticlePg {
-    id: i64,
-    author: i64,
-    title: String,
-    content: String,
-    created_at: chrono::DateTime<chrono::Local>,
-    updated_at: chrono::DateTime<chrono::Local>,
+    pub id: i64,
+    pub author: i64,
+    pub title: String,
+    pub content: String,
+    pub created_at: chrono::DateTime<chrono::Local>,
+    pub updated_at: chrono::DateTime<chrono::Local>,
 }
 
 impl Field for ArticlePg {
@@ -20,19 +20,11 @@ impl Field for ArticlePg {
     }
 
     fn values(&self) -> Vec<Value> {
-        vec![
-            Value::Int(self.author),
-            Value::String(self.title.to_owned()),
-            Value::String(self.content.to_owned()),
-        ]
+        unreachable!()
     }
 
     fn keys(&self) -> Vec<String> {
-        vec![
-            "author".to_string(),
-            "title".to_string(),
-            "content".to_string(),
-        ]
+        unreachable!()
     }
 }
 
@@ -44,7 +36,7 @@ pub struct ArticleNew {
 
 impl Field for ArticleNew {
     fn pg_id(&self) -> i64 {
-        0
+        unreachable!()
     }
 
     fn values(&self) -> Vec<Value> {
@@ -82,15 +74,17 @@ mod pg_tests {
     #[test]
     fn pg_test() {
         run_test(async {
-            let ctx = Ctx::root_user();
+            let ctx = Ctx::root_ctx();
             let mm = init_test().await;
-            let article: ArticlePg = ArticlePgBmc::first_by(&ctx, &mm, "id", 1000).await.unwrap();
+            let article: ArticlePg = ArticlePgBmc::first_by(&ctx, &mm, "id", 1000 as i64)
+                .await
+                .unwrap();
             assert_eq!(article.author, 1000);
             assert_eq!(article.content, "hello world");
             ArticlePgBmc::update_one_field(&ctx, &mm, article, "content", "hello louis")
                 .await
                 .unwrap();
-            let article: ArticlePg = ArticlePgBmc::first_by(&ctx, &mm, "author", 1000)
+            let article: ArticlePg = ArticlePgBmc::first_by(&ctx, &mm, "author", 1000 as i64)
                 .await
                 .unwrap();
             assert_eq!(article.content, "hello louis".to_string());
@@ -102,6 +96,7 @@ mod pg_tests {
             let id = ArticlePgBmc::insert(&ctx, &mm, article).await.unwrap();
             let article: ArticlePg = ArticlePgBmc::first_by(&ctx, &mm, "id", id).await.unwrap();
             assert_eq!(article.author, 1000);
+            assert_eq!(article.content, "hello again");
             ArticlePgBmc::delete_by(&ctx, &mm, "id", id).await.unwrap();
             assert!(
                 ArticlePgBmc::first_by::<ArticlePg, _, _>(&ctx, &mm, "id", id)

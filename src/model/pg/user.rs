@@ -7,11 +7,11 @@ use uuid::Uuid;
 
 #[derive(FromRow)]
 pub struct UserPg {
-    id: i64,
-    username: String,
-    pwd: Option<String>,
-    pwd_salt: Uuid,
-    token_salt: Uuid,
+    pub id: i64,
+    pub username: String,
+    pub pwd: Option<String>,
+    pub pwd_salt: Uuid,
+    pub token_salt: Uuid,
 }
 
 impl Field for UserPg {
@@ -20,14 +20,11 @@ impl Field for UserPg {
     }
 
     fn values<'a>(&self) -> Vec<Value> {
-        vec![
-            Value::String(self.username.to_owned()),
-            Value::String(self.pwd.as_ref().unwrap_or(&"".to_string()).to_owned()),
-        ]
+        unreachable!()
     }
 
     fn keys(&self) -> Vec<String> {
-        vec!["username".to_string(), "pwd".to_string()]
+        unreachable!()
     }
 }
 
@@ -38,7 +35,7 @@ pub struct UserPgNew {
 
 impl Field for UserPgNew {
     fn pg_id(&self) -> i64 {
-        0
+        unreachable!()
     }
 
     fn values(&self) -> Vec<Value> {
@@ -71,7 +68,7 @@ mod pg_tests {
     #[test]
     fn pg_test() {
         run_test(async {
-            let ctx = Ctx::root_user();
+            let ctx = Ctx::root_ctx();
             let mm = init_test().await;
             let user: UserPg = UserPgBmc::first_by(&ctx, &mm, "username", "demo1")
                 .await

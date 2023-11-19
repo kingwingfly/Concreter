@@ -13,9 +13,12 @@ pub use node::*;
 pub use pg::*;
 
 use agdb::{Db, QueryBuilder, QueryError};
+use snafu::ResultExt;
 use sqlx::postgres::{PgPool, PgPoolOptions};
 use std::sync::Arc;
 use tokio::sync::RwLock;
+
+use crate::config::config;
 
 #[derive(Clone)]
 pub struct ModelManager {
@@ -41,11 +44,8 @@ impl ModelManager {
 }
 
 fn init_agdb() -> DbResult<Db> {
-    #[cfg(test)]
-    dotenv::dotenv().ok();
-
-    let filename = std::env::var("AgdbFile")?;
-    let mut agdb = Db::new(&filename)?;
+    let filename = &config().AG_FILE;
+    let mut agdb = Db::new(filename)?;
 
     agdb.transaction_mut(|t| -> Result<(), QueryError> {
         for name in ["root", "articles", "users", "words", "formulas", "comments"] {
@@ -63,15 +63,12 @@ fn init_agdb() -> DbResult<Db> {
 }
 
 async fn init_pgdb() -> DbResult<PgPool> {
-    #[cfg(test)]
-    dotenv::dotenv().ok();
-
-    let url = std::env::var("PgUrl")?;
+    let url = &config().PG_URL;
     let pool = PgPoolOptions::new()
         .idle_timeout(std::time::Duration::from_secs(60))
         .acquire_timeout(std::time::Duration::from_secs(2))
         .max_connections(4)
-        .connect(&url)
+        .connect(url)
         .await?;
     Ok(pool)
 }
