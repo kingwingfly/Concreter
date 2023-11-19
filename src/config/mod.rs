@@ -57,20 +57,19 @@ impl Config {
 }
 
 fn get_env(name: &'static str) -> ConfigResult<String> {
-    Ok(env::var(name).context(config_error::MissingEnv {
+    env::var(name).context(config_error::MissingEnv {
         env_virable: name.to_owned(),
-    })?)
+    })
 }
 
 fn get_env_parse<F: FromStr>(name: &'static str) -> ConfigResult<F> {
     let val = get_env(name)?;
-    Ok(val
-        .parse::<F>()
-        .map_err(|_| config_error::WrongFormat.build())?)
+    val.parse::<F>()
+        .map_err(|_| config_error::WrongFormat.build())
 }
 
 fn get_env_b64u_as_u8s(name: &'static str) -> ConfigResult<Vec<u8>> {
-    Ok(b64u_decode(&get_env(name)?).map_err(|_| config_error::WrongFormat.build())?)
+    b64u_decode(&get_env(name)?).map_err(|_| config_error::WrongFormat.build())
 }
 
 #[cfg(test)]
