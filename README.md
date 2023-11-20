@@ -103,7 +103,7 @@ pg_ctl -D /path/to/pgdata -l /path/to/log.log start
 createdb concreter -O $USER
 
 # Set the PgUrl environment variable:
-export PgUrl=postgres://$USER:password@localhost:5432/concreter
+export PG_URL="postgres://app_user:dev_only_pwd@localhost/app_db"
 
 # Follows is the commands to end the service:
 pg_ctl -D /path/to/pgdata stop
@@ -120,6 +120,41 @@ export PgUrl=postgres://postgres:password@localhost:5432/postgres
 docker stop postgres
 docker rm postgres
 ```
+
+#### AgDb
+[`AgDb`](https://github.com/agnesoft/agdb) is a graph database.
+
+You need give it a `.agdb` suffix file to init the database. For eample:
+
+```sh
+export AG_FILE="/Users/louis/web/Concreter/agdata/db_test.ahdb"
+```
+
+#### gRPC
+To enable symbolic computation, I use python's [`sympy`](https://docs.sympy.org/latest/index.html). For time limitation, I don't have enough time explore `pyO3`, so I just use `gRPC` to interact with python in Rust.
+
+To start the python's gRPC server, you can run the following command:
+```sh
+# todo: set gRPC server address
+
+# activate the virtual environment
+source venv/bin/activate
+
+# generate the gRPC python code
+python -m grpc_tools.protoc -I./proto --python_out=./src_py/pb/ --pyi_out=./src_py/pb/ --grpc_python_out=./src_py/pb/ proto/sym.proto
+# start server
+
+# Ctrl + C to end the service, and deactivate the virtual environment
+deactivate
+```
+If you meet problem in calling grpc_tools, just compile one on your machine:
+```sh
+pip uninstall grpcio grpcio-tools
+export GRPC_PYTHON_LDFLAGS=" -framework CoreFoundation"
+pip install grpcio --no-binary :all:
+pip install grpcio-tools --no-binary :all:
+```
+This always takes a long time.
 
 ### Installation
 

@@ -18,3 +18,5 @@ Cargo.lock
 pgdata
 agdata
 log
+src_py/__pycache__
+src_py/pb
