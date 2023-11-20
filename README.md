@@ -133,6 +133,13 @@ export AG_FILE="/Users/louis/web/Concreter/agdata/db_test.ahdb"
 #### gRPC
 To enable symbolic computation, I use python's [`sympy`](https://docs.sympy.org/latest/index.html). For time limitation, I don't have enough time explore `pyO3`, so I just use `gRPC` to interact with python in Rust.
 
+I suggest use docker:
+```sh
+docker build -t rpc-py .
+docker run -it -p 50001:50001 --rm --name rpc-py rpc-py
+```
+You can also choose to run on your machine. But python's rpc cannot well-support MacOS M1 now.
+
 To start the python's gRPC server, you can run the following command:
 ```sh
 # create a virtual environment
@@ -162,20 +169,7 @@ pip install grpcio-tools --no-binary :all:
 This always takes a long time.
 
 ### Installation
-
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
-   ```sh
-   git clone https://github.com/kingwingfly/Concreter.git
-   ```
-3. Install NPM packages
-   ```sh
-   npm install
-   ```
-4. Enter your API in `config.js`
-   ```js
-   const API_KEY = 'ENTER YOUR API';
-   ```
+Todo
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
