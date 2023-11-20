@@ -1,0 +1,29 @@
+# Environments variables set for all `cargo ...` commands.
+[env]
+# Scope down tracing, to filter out external lib tracing.
+RUST_LOG="concreter=debug"
+
+# -- Service Environment Variables
+# IMPORTANT:
+#   For cargo commands only.
+#   For deployed env, should be managed by container
+#   (e.g., Kubernetes).
+
+## -- Secrets
+# Keys and passwords below are for localhost dev ONLY.
+# e.g., "welcome" type of passwords.
+# i.e., Encryption not needed.
+
+PG_URL="postgres://app_user:dev_only_pwd@localhost/app_db"
+AG_FILE="/Users/louis/web/Concreter/agdata/db_test.ahdb"
+
+SERVICE_PWD_KEY="JxLSSJZq-4XP9ugcw4I3sIa-lAjGRWZNA9BPwv8NIWkPR0Jmr21w_UUmFXxDDuDx4S3jOZLxAqnZ_qB8w8uoRA"
+
+SERVICE_TOKEN_KEY="0S0b8LnN0t5gnbbWLFZbhLRHJ2ySvbnVWfV-ypA9psFHkyyJ4Y5CQpK3KUODLCrmv3Xbvl7g9GvlncpQAE9U3A"
+SERVICE_TOKEN_DURATION_SEC="1800" # 30 minutes
+
+## -- ConfigMap
+
+# This will be relative to Cargo.toml
+# In deployed images, probably use absolute path.
+SERVICE_WEB_FOLDER="web-folder/"

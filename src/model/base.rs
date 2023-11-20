@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 use agdb::{DbId, DbUserValue, QueryBuilder, QueryError, QueryIds};
 use sqlx::{postgres::PgRow, Encode, FromRow, Postgres, Row, Type};
 
@@ -120,8 +122,6 @@ pub trait PgdbBmc {
         F: AsRef<str>,
         for<'q> V: Send + Encode<'q, Postgres> + Type<Postgres>,
     {
-        mm.pgdb().acquire().await.unwrap();
-
         Ok(sqlx::query_as(&format!(
             "SELECT * FROM {} WHERE {} = $1 LIMIT 1",
             Self::TABLE,
