@@ -35,6 +35,9 @@ pub struct Config {
 
     // -- Web
     pub WEB_FOLDER: String,
+
+    // --Rpc
+    pub SYM_ADDR: String,
 }
 
 impl Config {
@@ -52,6 +55,9 @@ impl Config {
 
             // -- Web
             WEB_FOLDER: get_env("SERVICE_WEB_FOLDER")?,
+
+            // --Rpc
+            SYM_ADDR: get_env("SYM_ADDR")?,
         })
     }
 }

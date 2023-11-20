@@ -2,6 +2,7 @@ mod config;
 mod ctx;
 mod error;
 mod model;
+mod pb;
 mod pwd;
 mod token;
 mod utils;

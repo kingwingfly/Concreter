@@ -3,33 +3,46 @@ name = "concreter"
 version = "0.0.1"
 authors = ["Louis <836250617@qq.com>"]
 edition = "2021"
+license = "APACHE-2.0"
 
 [dependencies]
+# databse
 agdb = {version = "0.5.1", features = []}
-chrono = {version = "0.4", features = []}
 sqlx = {version = "0.7", features = ["runtime-tokio-rustls", "postgres", "macros", "uuid", "chrono"]}
-tokio = {version = "1", features = ["full"]}
-dotenv = "0.15.0"
-snafu = {version = "0.7.5", features = ["std", "rust_1_61"]}
-tracing = "0.1.40"
-tracing-subscriber = { version = "0.3", features = ["env-filter"] }
-url = "2.4.1"
-uuid = {version = "1.5.0", features = ["v4"]}
-lazy_static = "1.4.0"
+# service
 axum = {version = "^0.6", features = ["default"]}
+tower = {version = "0.4"}
+tower-cookies = "0.9.0"
+tower-http = { version = "0.4.4", features = ["fs"] }
+tonic = {version = "^0.10"}
+prost = "0.12"
+# runtime
+tokio = {version = "1", features = ["full"]}
+async-trait = "0.1.74"
+# encode
 base64 = "0.21.5"
 hmac = "0.12.1"
 sha2 = "0.10.8"
-tower-cookies = "0.9.0"
 serde_json = "1.0.108"
 serde = "1.0.192"
+uuid = {version = "1.5.0", features = ["v4"]}
+# env
+dotenv = "0.15.0"
+# error
+snafu = {version = "0.7.5", features = ["std", "rust_1_61"]}
+# time
+chrono = {version = "0.4", features = []}
 time = "0.3.30"
-tower-http = { version = "0.4.4", features = ["fs"] }
-async-trait = "0.1.74"
-httpc-test = "0.1"
-tower = {version = "0.4"}
+# tracing
+tracing = "0.1.40"
+tracing-subscriber = { version = "^0.3", features = ["env-filter"] }
+url = "2.4.1"
+# other
+
+[build-dependencies]
+tonic-build = {version = "^0.10"}
 
 [dev-dependencies]
 anyhow = "1"
-httpc-test = {version = "0.1", fearures = ["color-output"]}
+httpc-test = {version = "^0.1", fearures = ["color-output"]}
 rand = "0.8" # For examples/gen-key

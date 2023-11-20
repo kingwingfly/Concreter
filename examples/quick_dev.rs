@@ -20,6 +20,7 @@ async fn main() -> Result<()> {
         }),
     );
     req_login.await?.print().await?;
+
     let after_login_test = hc.do_get("/api/rpc");
     after_login_test.await?.print().await?;
 

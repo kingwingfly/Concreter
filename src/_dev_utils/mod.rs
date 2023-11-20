@@ -1,21 +1,18 @@
 mod dev_db;
 
-use lazy_static::lazy_static;
 use tokio::sync::OnceCell;
 use tracing::info;
 
 pub fn test_rt() -> &'static tokio::runtime::Runtime {
-    lazy_static! {
-        static ref RT: tokio::runtime::Runtime = {
-            let rt = tokio::runtime::Builder::new_current_thread()
-                .enable_all()
-                .build()
-                .unwrap();
-            rt.block_on(init_test());
-            rt
-        };
-    }
-    &RT
+    static RT: std::sync::OnceLock<tokio::runtime::Runtime> = std::sync::OnceLock::new();
+    RT.get_or_init(|| {
+        let rt = tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()
+            .unwrap();
+        rt.block_on(init_test());
+        rt
+    })
 }
 
 /// All the test about database should be run in this function.
