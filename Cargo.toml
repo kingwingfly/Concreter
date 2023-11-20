@@ -14,17 +14,20 @@ snafu = {version = "0.7.5", features = ["std", "rust_1_61"]}
 tracing = "0.1.40"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 url = "2.4.1"
-uuid = "1.5.0"
+uuid = {version = "1.5.0", features = ["v4"]}
 lazy_static = "1.4.0"
-axum = {version = "^0.6", features = ["default", "macros"]}
+axum = {version = "^0.6", features = ["default"]}
 base64 = "0.21.5"
 hmac = "0.12.1"
 sha2 = "0.10.8"
-rand = "0.8.5"
-anyhow = "1.0.75"
 tower-cookies = "0.9.0"
 serde_json = "1.0.108"
 serde = "1.0.192"
 time = "0.3.30"
+tower-http = { version = "0.4.4", features = ["fs"] }
+async-trait = "0.1.74"
 
 [dev-dependencies]
+anyhow = "1"
+httpc-test = "0.1"
+rand = "0.8" # For examples/gen-key

@@ -17,7 +17,13 @@ use tower_cookies::CookieManagerLayer;
 use tracing::info;
 use tracing_subscriber::EnvFilter;
 
-use crate::{model::ModelManager, web::routes_login};
+use crate::{
+    model::ModelManager,
+    web::{
+        mw_auth::{mw_ctx_require, mw_ctx_resolve},
+        routes_login, routes_static, rpc,
+    },
+};
 
 #[tokio::main]
 async fn main() -> AppResult<()> {
@@ -34,16 +40,15 @@ async fn main() -> AppResult<()> {
     let mm = ModelManager::new().await?;
 
     // // -- Define Routes
-    // let routes_rpc = rpc::routes(mm.clone()).route_layer(middleware::from_fn(mw_ctx_require));
+    let routes_rpc = rpc::routes(mm.clone()).route_layer(middleware::from_fn(mw_ctx_require));
 
     let routes_all = Router::new()
         .merge(routes_login::routes(mm.clone()))
-        // .nest("/api", routes_rpc)
+        .nest("/api", routes_rpc)
         // .layer(middleware::map_response(mw_reponse_map))
-        // .layer(middleware::from_fn_with_state(mm.clone(), mw_ctx_resolve))
+        .layer(middleware::from_fn_with_state(mm.clone(), mw_ctx_resolve))
         .layer(CookieManagerLayer::new())
-        // .fallback_service(routes_static::serve_dir());
-        ;
+        .fallback_service(routes_static::serve_dir());
 
     // region:    --- Start Server
     let addr = SocketAddr::from(([127, 0, 0, 1], 8080));

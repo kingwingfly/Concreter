@@ -1,6 +1,7 @@
 mod error;
 pub use error::*;
 
+#[derive(Debug, Clone)]
 pub struct Ctx {
     user_id: i64,
 }

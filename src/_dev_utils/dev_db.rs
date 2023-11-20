@@ -1,8 +1,10 @@
 use std::{fs, path::PathBuf};
 
-use sqlx::{postgres::PgConnectOptions, ConnectOptions, PgConnection};
+use sqlx::{postgres::PgConnectOptions, ConnectOptions, PgConnection, Row};
 use tracing::info;
 use url::Url;
+
+use crate::pwd::{hash_pwd, ContentToHash};
 
 const PG_DEV_POSTGRES_URL: &str = "postgres://postgres:postgres@localhost:5432/postgres";
 const PG_DEV_APP_URL: &str = "postgres://app_user:dev_only_pwd@localhost:5432/app_db";
@@ -32,6 +34,29 @@ pub async fn init_dev_db() -> Result<(), Box<dyn std::error::Error>> {
         }
     }
 
+    init_user_demo1(con).await?;
+
+    Ok(())
+}
+
+async fn init_user_demo1(mut con: PgConnection) -> Result<(), Box<dyn std::error::Error>> {
+    let pwd_salt = sqlx::query("SELECT pwd_salt FROM users where username=$1 LIMIT 1")
+        .bind("demo1")
+        .fetch_one(&mut con)
+        .await
+        .unwrap()
+        .try_get(0)
+        .unwrap();
+    let pwd = "welcome";
+    let content_to_hash = ContentToHash {
+        content: pwd.to_string(),
+        salt: pwd_salt,
+    };
+    let pwd_hashed = hash_pwd(&content_to_hash).unwrap();
+    sqlx::query("UPDATE users SET pwd=$1 WHERE username='demo1'")
+        .bind(pwd_hashed)
+        .execute(&mut con)
+        .await?;
     Ok(())
 }
 

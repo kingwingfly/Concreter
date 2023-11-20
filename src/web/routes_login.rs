@@ -23,7 +23,6 @@ pub fn routes(mm: ModelManager) -> Router {
 
 // region:    --- Login
 
-#[axum::debug_handler]
 async fn api_login_handler(
     State(mm): State<ModelManager>,
     cookies: Cookies,
