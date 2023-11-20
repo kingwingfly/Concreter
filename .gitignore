@@ -15,6 +15,7 @@ Cargo.lock
 
 .DS_Store
 .env
+venv/
 pgdata
 agdata
 log

@@ -135,14 +135,19 @@ To enable symbolic computation, I use python's [`sympy`](https://docs.sympy.org/
 
 To start the python's gRPC server, you can run the following command:
 ```sh
-# todo: set gRPC server address
+# create a virtual environment
+python3 -m venv ./venv
 
 # activate the virtual environment
 source venv/bin/activate
 
+# install the dependencies
+pip install -r requirements.txt
+
 # generate the gRPC python code
 python -m grpc_tools.protoc -I./proto --python_out=./src_py/pb/ --pyi_out=./src_py/pb/ --grpc_python_out=./src_py/pb/ proto/sym.proto
-# start server
+
+# set server address and start the server
 
 # Ctrl + C to end the service, and deactivate the virtual environment
 deactivate
