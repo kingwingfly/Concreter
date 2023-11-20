@@ -2,7 +2,7 @@ use axum::{http::StatusCode, response::IntoResponse};
 use snafu::Snafu;
 use tracing::debug;
 
-use crate::{model::DbError, token::TokenError};
+use crate::model::DbError;
 
 #[derive(Debug, Snafu)]
 #[snafu(module, visibility(pub), context(suffix(false)))]

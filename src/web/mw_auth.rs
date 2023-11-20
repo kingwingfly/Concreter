@@ -4,10 +4,10 @@ use crate::token::{validate_web_token, Token};
 use crate::web::{set_token_cookie, AUTH_TOKEN};
 use axum::extract::{FromRequestParts, State};
 use axum::http::request::Parts;
-use axum::http::{Request, StatusCode};
+use axum::http::Request;
 use axum::middleware::Next;
-use axum::response::{IntoResponse, Response};
-use snafu::{OptionExt, ResultExt};
+use axum::response::Response;
+use snafu::OptionExt;
 use tower_cookies::{Cookie, Cookies};
 use tracing::debug;
 

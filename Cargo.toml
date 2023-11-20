@@ -26,8 +26,10 @@ serde = "1.0.192"
 time = "0.3.30"
 tower-http = { version = "0.4.4", features = ["fs"] }
 async-trait = "0.1.74"
+httpc-test = "0.1"
+tower = {version = "0.4"}
 
 [dev-dependencies]
 anyhow = "1"
-httpc-test = "0.1"
+httpc-test = {version = "0.1", fearures = ["color-output"]}
 rand = "0.8" # For examples/gen-key

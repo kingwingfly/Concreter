@@ -7,7 +7,7 @@ use serde_json::json;
 async fn main() -> Result<()> {
     let hc = httpc_test::new_client("http://localhost:8080")?;
 
-    hc.do_get("/index.html").await?.print().await?;
+    // hc.do_get("/index.html").await?.print().await?;
 
     let before_login_test = hc.do_get("/api/rpc");
     before_login_test.await?.print().await?;
