@@ -14,7 +14,7 @@ class SymServer(SymServicer):
 if __name__ == "__main__":
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     sym_pb2_grpc.add_SymServicer_to_server(SymServer(), server)
-    server.add_insecure_port("[::]:50001")
-    print("listening on port [::]:50001")
+    server.add_insecure_port("[::]:50051")
+    print("listening on port [::]:50051")
     server.start()
     server.wait_for_termination()

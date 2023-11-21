@@ -136,7 +136,7 @@ To enable symbolic computation, I use python's [`sympy`](https://docs.sympy.org/
 I suggest use docker:
 ```sh
 docker build -t rpc-py .
-docker run -it -p 50001:50001 --rm --name rpc-py rpc-py
+docker run -it -p 50051:50051 --rm --name rpc-py rpc-py
 ```
 You can also choose to run on your machine. But python's rpc cannot well-support MacOS M1 now.
 
