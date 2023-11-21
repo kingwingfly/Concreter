@@ -152,7 +152,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 
 # generate the gRPC python code
-python -m grpc_tools.protoc -I./proto --python_out=./src_py/pb/ --pyi_out=./src_py/pb/ --grpc_python_out=./src_py/pb/ proto/sym.proto
+python -m grpc_tools.protoc -I./proto --python_out=./src_py --pyi_out=./src_py --grpc_python_out=./src_py proto/sym.proto
 
 # set server address and start the server
 
