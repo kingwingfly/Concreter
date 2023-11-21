@@ -21,3 +21,4 @@ agdata
 log
 __pycache__
 src_py/pb
+pyrightconfig.json
