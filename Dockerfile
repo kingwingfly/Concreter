@@ -3,9 +3,10 @@ FROM python:3.10
 WORKDIR /usr/src/app
 
 COPY ./src_py/requirements.txt ./requirements.txt
-COPY ./proto ./proto
 
-VOLUME ["./src_py" ]
+VOLUME ["./src_py", "./proto" ]
+
+RUN alias cls=clear
 
 RUN pip install --upgrade pip
 

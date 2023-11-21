@@ -3,5 +3,4 @@ grpcio-tools
 openai
 python-dotenv
 httpx
-socksio
 sympy

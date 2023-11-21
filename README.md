@@ -137,37 +137,47 @@ I suggest use docker:
 ```sh
 # At the root of the project, run:
 docker build -t rpc-py .
-docker run -it -p 50051:50051 -v ./src_py:/usr/src/app/src_py --rm --name rpc-py rpc-py
+docker run -it -p 50051:50051 -v ./proto:/usr/src/app/proto -v ./src_py:/usr/src/app/src_py --rm --name rpc-py rpc-py
 ```
-You can also choose to run on your machine. But python's rpc cannot well-support MacOS M1 now.
+You can also choose to run on your machine. But python's rpc cannot well-support MacOS M1 now. And the python version `sympy` supports is up to `3.10`.
 
 To start the python's gRPC server, you can run the following command:
 ```sh
 # create a virtual environment
 python3 -m venv ./venv
+# or
+conda create -n py310 python=3.10
 
 # activate the virtual environment
 source venv/bin/activate
+# or
+conda activate py311
 
 # install the dependencies
 pip install -r requirements.txt
+# For Arm Mac, use
+pip install socksio
+conda install --file requirements.txt
+pip install --upgrade openai
 
 # generate the gRPC python code
-python -m grpc_tools.protoc -I./proto --python_out=./src_py --pyi_out=./src_py --grpc_python_out=./src_py proto/sym.proto
+export PB="./src_py" && python -m grpc_tools.protoc -I./proto --python_out=$PB --pyi_out=$PB --grpc_python_out=$PB proto/sym.proto
 
 # set server address and start the server
+Todo
 
 # Ctrl + C to end the service, and deactivate the virtual environment
 deactivate
+# or
+conda deactivate
 ```
-If you meet problem in calling grpc_tools, just compile one on your machine:
-```sh
-pip uninstall grpcio grpcio-tools
-export GRPC_PYTHON_LDFLAGS=" -framework CoreFoundation"
-pip install grpcio --no-binary :all:
-pip install grpcio-tools --no-binary :all:
+For both method, you may need proxy configured. For docker, the host network should set proxy. For local machine, set the proxy in `src_py/openai_utils.py`:
+```python
+client = OpenAI(
+    # In docker, do not need to set proxy, for it uses host network which does.
+    http_client=Client(proxies="http://127.0.0.1:7890"), timeout=30, max_retries=0
+)
 ```
-This always takes a long time.
 
 ### Installation
 Todo
