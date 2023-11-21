@@ -135,6 +135,7 @@ To enable symbolic computation, I use python's [`sympy`](https://docs.sympy.org/
 
 I suggest use docker:
 ```sh
+# At the root of the project, run:
 docker build -t rpc-py .
 docker run -it -p 50051:50051 -v ./src_py:/usr/src/app/src_py --rm --name rpc-py rpc-py
 ```

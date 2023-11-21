@@ -2,7 +2,7 @@ FROM python:3.12
 
 WORKDIR /usr/src/app
 
-COPY ./requirements.txt ./requirements.txt
+COPY ./src_py/requirements.txt ./requirements.txt
 COPY ./proto ./proto
 
 VOLUME ["./src_py" ]

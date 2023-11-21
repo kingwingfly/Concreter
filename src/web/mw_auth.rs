@@ -61,7 +61,7 @@ async fn _ctx_resolve(mm: State<ModelManager>, cookies: &Cookies) -> AuthResult<
     // -- Get UserForAuth
     let user: UserPg = UserPgBmc::first_by(&Ctx::root_ctx(), &mm, "username", &token.ident)
         .await
-        .map_err(|e| auth_error::UserNotFound.build())?;
+        .map_err(|_| auth_error::UserNotFound.build())?;
 
     // -- Validate Token
     validate_web_token(&token, user.token_salt).map_err(|_| auth_error::FailValidate.build())?;
