@@ -1,4 +1,4 @@
-mod grpc_py;
+mod sym;
 
 use axum::{routing::get, Router};
 

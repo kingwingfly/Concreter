@@ -1,5 +1,6 @@
 mod config;
 mod ctx;
+mod entity;
 mod error;
 mod model;
 mod pb;

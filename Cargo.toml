@@ -19,6 +19,8 @@ prost = "0.12"
 # runtime
 tokio = {version = "1", features = ["full"]}
 async-trait = "0.1.74"
+# network
+reqwest = {version = "0.11", features = []}
 # encode
 base64 = "0.21.5"
 hmac = "0.12.1"
@@ -26,7 +28,6 @@ sha2 = "0.10.8"
 serde_json = "1.0.108"
 serde = "1.0.192"
 uuid = {version = "1.5.0", features = ["v4"]}
-# env
 dotenv = "0.15.0"
 # error
 snafu = {version = "0.7.5", features = ["std", "rust_1_61"]}
