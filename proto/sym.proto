@@ -1,0 +1,42 @@
+syntax = "proto3";
+package sym;
+
+service Sym {
+    // Our SayHello rpc accepts HelloRequests and returns HelloReplies
+    rpc SayHello (HelloRequest) returns (HelloReply);
+    // Convert md formula and substitud symbol with value(or expr)
+    rpc ConvertMdFormula (ConvertMdRequest) returns (ConvertMdReply);
+}
+
+message HelloRequest {
+    // Request message contains the name to be greeted
+    string name = 1;
+}
+
+message HelloReply {
+    // Reply contains the greeting message
+    string message = 1;
+}
+
+enum ValueType {
+    NUMBER = 0;
+    EXPR = 1;
+}
+
+message ConvertMdRequest {
+    // Request contains the md fomula
+    string md = 1;
+    // Request contains the symbols in md fomula
+    string symbols = 2;
+    // Request contains the symbol which will be substituded
+    string symbol = 3;
+    // Request contains the value of the symbol field. Specify the type in type field
+    string value = 4;
+    // Request contains the values's type, either "number" or "expr"
+    ValueType type = 5;
+}
+
+message ConvertMdReply {
+    // Reply contains the converted and substituded formula
+    string formula = 1;
+}

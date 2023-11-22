@@ -1,0 +1,15 @@
+syntax = "proto3";
+package nlp;
+
+service Nlp {
+    rpc Ner (NerRequest) returns (NerReply);
+}
+
+message NerRequest {
+    string text = 1;
+    string region = 2;
+}
+
+message NerReply {
+    string ner_ret = 1;
+}

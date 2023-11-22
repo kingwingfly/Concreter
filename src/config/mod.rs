@@ -1,5 +1,3 @@
-// region:    --- Modules
-
 mod error;
 
 pub use error::*;
@@ -9,8 +7,6 @@ use crate::utils::b64::b64u_decode;
 use std::env;
 use std::str::FromStr;
 use std::sync::OnceLock;
-
-// endregion: --- Modules
 
 pub fn config() -> &'static Config {
     static INSTANCE: OnceLock<Config> = OnceLock::new();
@@ -29,16 +25,27 @@ pub struct Config {
     pub TOKEN_KEY: Vec<u8>,
     pub TOKEN_DURATION_SEC: f64,
 
+    // -- Baidu NER
+    pub API_KEY: String,
+    pub SECRET_KEY: String,
+
+    // -- NLP_API
+    pub NLP_API_TOKEN: String,
+
     // -- Db
     pub PG_URL: String,
     pub AG_FILE: String,
 
     // -- Web
     pub WEB_FOLDER: String,
+
+    // --Rpc
+    pub RPC_ADDR: String,
 }
 
 impl Config {
     fn load_from_env() -> ConfigResult<Self> {
+        dotenv::dotenv().ok();
         Ok(Self {
             // -- Keys
             PWD_KEY: get_env_b64u_as_u8s("SERVICE_PWD_KEY")?,
@@ -46,12 +53,22 @@ impl Config {
             TOKEN_KEY: get_env_b64u_as_u8s("SERVICE_TOKEN_KEY")?,
             TOKEN_DURATION_SEC: get_env_parse("SERVICE_TOKEN_DURATION_SEC")?,
 
+            // -- Baidu NER
+            API_KEY: get_env("API_KEY")?,
+            SECRET_KEY: get_env("SECRET_KEY")?,
+
+            // -- NLP_API
+            NLP_API_TOKEN: get_env("NLP_API_TOKEN")?,
+
             // -- Db
             PG_URL: get_env("PG_URL")?,
             AG_FILE: get_env("AG_FILE")?,
 
             // -- Web
             WEB_FOLDER: get_env("SERVICE_WEB_FOLDER")?,
+
+            // --Rpc
+            RPC_ADDR: get_env("RPC_ADDR")?,
         })
     }
 }

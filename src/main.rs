@@ -1,7 +1,9 @@
 mod config;
 mod ctx;
+mod entity;
 mod error;
 mod model;
+mod pb;
 mod pwd;
 mod token;
 mod utils;
@@ -11,8 +13,12 @@ mod _dev_utils;
 
 use std::net::SocketAddr;
 
-use axum::{middleware, Router};
+use axum::{
+    middleware::{from_fn, from_fn_with_state, map_response},
+    Router,
+};
 use error::*;
+use tower::ServiceBuilder;
 use tower_cookies::CookieManagerLayer;
 use tracing::info;
 use tracing_subscriber::EnvFilter;
@@ -21,6 +27,7 @@ use crate::{
     model::ModelManager,
     web::{
         mw_auth::{mw_ctx_require, mw_ctx_resolve},
+        mw_res_map::mw_reponse_map,
         routes_login, routes_static, rpc,
     },
 };
@@ -39,15 +46,18 @@ async fn main() -> AppResult<()> {
     // Initialize ModelManager.
     let mm = ModelManager::new().await?;
 
-    // // -- Define Routes
-    let routes_rpc = rpc::routes(mm.clone()).route_layer(middleware::from_fn(mw_ctx_require));
+    // -- Define Routes
+    let routes_rpc = rpc::routes(mm.clone()).route_layer(from_fn(mw_ctx_require));
 
     let routes_all = Router::new()
         .merge(routes_login::routes(mm.clone()))
         .nest("/api", routes_rpc)
-        // .layer(middleware::map_response(mw_reponse_map))
-        .layer(middleware::from_fn_with_state(mm.clone(), mw_ctx_resolve))
-        .layer(CookieManagerLayer::new())
+        .layer(
+            ServiceBuilder::new()
+                .layer(CookieManagerLayer::new())
+                .layer(from_fn_with_state(mm.clone(), mw_ctx_resolve))
+                .layer(map_response(mw_reponse_map)),
+        )
         .fallback_service(routes_static::serve_dir());
 
     // region:    --- Start Server

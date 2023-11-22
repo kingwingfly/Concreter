@@ -103,7 +103,7 @@ pg_ctl -D /path/to/pgdata -l /path/to/log.log start
 createdb concreter -O $USER
 
 # Set the PgUrl environment variable:
-export PgUrl=postgres://$USER:password@localhost:5432/concreter
+export PG_URL="postgres://app_user:dev_only_pwd@localhost/app_db"
 
 # Follows is the commands to end the service:
 pg_ctl -D /path/to/pgdata stop
@@ -121,21 +121,66 @@ docker stop postgres
 docker rm postgres
 ```
 
-### Installation
+#### AgDb
+[`AgDb`](https://github.com/agnesoft/agdb) is a graph database.
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
-   ```sh
-   git clone https://github.com/kingwingfly/Concreter.git
-   ```
-3. Install NPM packages
-   ```sh
-   npm install
-   ```
-4. Enter your API in `config.js`
-   ```js
-   const API_KEY = 'ENTER YOUR API';
-   ```
+You need give it a `.agdb` suffix file to init the database. For eample:
+
+```sh
+export AG_FILE="/Users/louis/web/Concreter/agdata/db_test.ahdb"
+```
+
+#### gRPC
+To enable symbolic computation, I use python's [`sympy`](https://docs.sympy.org/latest/index.html). For time limitation, I don't have enough time explore `pyO3`, so I just use `gRPC` to interact with python in Rust.
+
+I suggest use docker:
+```sh
+# At the root of the project, run:
+docker build -t rpc-py .
+docker run -it -p 50051:50051 -v ./proto:/usr/src/app/proto -v ./src_py:/usr/src/app/src_py --rm --name rpc-py rpc-py
+```
+You can also choose to run on your machine. But python's rpc cannot well-support MacOS M1 now. And the python version `sympy` supports is up to `3.10`.
+
+To start the python's gRPC server, you can run the following command:
+```sh
+# create a virtual environment
+python3 -m venv ./venv
+# or
+conda create -n py310 python=3.10
+
+# activate the virtual environment
+source venv/bin/activate
+# or
+conda activate py311
+
+# install the dependencies
+pip install -r requirements.txt
+# For Arm Mac, use
+pip install socksio
+conda install --file requirements.txt
+pip install --upgrade openai
+
+# generate the gRPC python code
+export PB="./src_py" && python -m grpc_tools.protoc -I./proto --python_out=$PB --pyi_out=$PB --grpc_python_out=$PB proto/sym.proto
+
+# set server address and start the server
+Todo
+
+# Ctrl + C to end the service, and deactivate the virtual environment
+deactivate
+# or
+conda deactivate
+```
+For both method, you may need proxy configured. For docker, the host network should set proxy. For local machine, set the proxy in `src_py/openai_utils.py`:
+```python
+client = OpenAI(
+    # In docker, do not need to set proxy, for it uses host network which does.
+    http_client=Client(proxies="http://127.0.0.1:7890"), timeout=30, max_retries=0
+)
+```
+
+### Installation
+Todo
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

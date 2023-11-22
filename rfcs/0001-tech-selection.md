@@ -44,10 +44,10 @@ As for now, I suggest using `Rust`, `python` and `typescript` as the language we
 
 ### As to **backend**,
 - To build a knowledge graph, neo4j in Java is a not a hyper choice, we are glad to try [agdb](https://github.com/agnesoft/agdb) as our graph database.
-- For symbolic computation, python's [`sympy`](https://docs.sympy.org/latest/index.html) is the first choice while the other's far away useful enough. In rust neither [symbolic_polynomials](https://crates.io/crates/symbolic_polynomials) nor [savage](https://crates.io/crates/savage_core) is far from easily useful.
-- Run python on server and send back the result. Here are two ways: use socket or severless to deploy text knowledge and formula separately on server side; Or just use [pyO3](https://crates.io/crates/pyo3) to build our server.
-
+- For symbolic computation, python's [`sympy`](https://docs.sympy.org/latest/index.html) is the first choice while the other's far away useful enough. In rust either [symbolic_polynomials](https://crates.io/crates/symbolic_polynomials) or [savage](https://crates.io/crates/savage_core) is far from easily useful.
+- Run python on server and send back the result. Here are two ways: Either deploy text knowledge and formulas separately using sockets or serverless, or couple them together using [pyO3](https://crates.io/crates/pyo3) for deployment.
 ### Deploy
+
 We could not use Vercel maybe, for our backend is almost in Rust. There are two choice, just using an `Aliyun` server or try serverless(`FaaS`) deployment. They are challengeable. 考虑到阿里云可笑的文档，可能应该选择`AWS`作为部署平台。
 
 ## Implementation

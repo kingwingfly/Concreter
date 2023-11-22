@@ -4,10 +4,10 @@ use crate::token::{validate_web_token, Token};
 use crate::web::{set_token_cookie, AUTH_TOKEN};
 use axum::extract::{FromRequestParts, State};
 use axum::http::request::Parts;
-use axum::http::{Request, StatusCode};
+use axum::http::Request;
 use axum::middleware::Next;
-use axum::response::{IntoResponse, Response};
-use snafu::{OptionExt, ResultExt};
+use axum::response::Response;
+use snafu::OptionExt;
 use tower_cookies::{Cookie, Cookies};
 use tracing::debug;
 
@@ -61,7 +61,7 @@ async fn _ctx_resolve(mm: State<ModelManager>, cookies: &Cookies) -> AuthResult<
     // -- Get UserForAuth
     let user: UserPg = UserPgBmc::first_by(&Ctx::root_ctx(), &mm, "username", &token.ident)
         .await
-        .map_err(|e| auth_error::UserNotFound.build())?;
+        .map_err(|_| auth_error::UserNotFound.build())?;
 
     // -- Validate Token
     validate_web_token(&token, user.token_salt).map_err(|_| auth_error::FailValidate.build())?;

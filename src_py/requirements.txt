@@ -1,0 +1,6 @@
+grpcio
+grpcio-tools
+openai
+python-dotenv
+httpx
+sympy

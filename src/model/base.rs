@@ -1,5 +1,3 @@
-use std::fmt::Display;
-
 use agdb::{DbId, DbUserValue, QueryBuilder, QueryError, QueryIds};
 use sqlx::{postgres::PgRow, Encode, FromRow, Postgres, Row, Type};
 
