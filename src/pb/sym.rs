@@ -1,8 +1,6 @@
-mod sym {
-    tonic::include_proto!("sym");
-}
+tonic::include_proto!("sym");
 
-use sym::sym_client::SymClient;
+use sym_client::SymClient;
 use tokio::sync::OnceCell;
 use tonic::transport::Channel;
 
@@ -14,7 +12,7 @@ async fn sym_client() -> SymClient<Channel> {
     static SYM_CLIENT: OnceCell<SymClient<Channel>> = OnceCell::const_new();
     SYM_CLIENT
         .get_or_init(|| async {
-            let addr = config().SYM_ADDR.to_owned();
+            let addr = config().RPC_ADDR.to_owned();
             let channel = Channel::from_shared(addr).unwrap().connect().await.unwrap();
             SymClient::new(channel)
         })
@@ -25,7 +23,6 @@ async fn sym_client() -> SymClient<Channel> {
 #[cfg(test)]
 mod test {
     use super::*;
-    use sym::{ConvertMdRequest, HelloRequest, ValueType};
 
     #[tokio::test]
     async fn hello_test() {

@@ -20,7 +20,7 @@ prost = "0.12"
 tokio = {version = "1", features = ["full"]}
 async-trait = "0.1.74"
 # network
-reqwest = {version = "0.11", features = []}
+reqwest = {version = "0.11", features = ["json"]}
 # encode
 base64 = "0.21.5"
 hmac = "0.12.1"
