@@ -74,17 +74,19 @@
 
 ### Built With
 
+* [![Rust][Rust]][Rust-url]
+* [![Python][Python]][Python-url]
+* [![typescript][typescript]][typescript-url]
+* [![gRPC][gRPC]][gRPC-url]
+* [![docker][docker]][docker-url]
+* [![postgresql][postgresql]][postgresql-url]
+* [![agdb][agdb]][agdb-url]
+* [![openai][openai]][openai-url]
 * [![Next][Next.js]][Next-url]
 * [![React][React.js]][React-url]
-* Rust
-* Python
-* gRPC
-* Docker
-* PostgreSql
-* Agdb
-* OpenAi chatGPT
-* reveal.js
-* ifc.js
+* [![reveal][reveal]][reveal-url]
+* [![three][three]][three-url]
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -289,7 +291,28 @@ Project Link: [https://github.com/kingwingfly/Concreter](https://github.com/king
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/linkedin_username
 [product-screenshot]: images/screenshot.png
+
+[Rust]: https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=Rust&logoColor=orange
+[Rust-url]: https://www.rust-lang.org
+[Python]: https://img.shields.io/badge/Python-000000?style=for-the-badge&logo=Python&logoColor=blue
+[Python-url]: https://www.python.org
+[typescript]: https://img.shields.io/badge/typescript-000000?style=for-the-badge&logo=typescript&logoColor=blue
+[typescript-url]: https://www.typescriptlang.org
+[gRPC]: https://img.shields.io/badge/gRPC-000000?style=for-the-badge&logo=gRPC&logoColor=yello
+[gRPC-url]: https://grpc.io
+[docker]: https://img.shields.io/badge/docker-000000?style=for-the-badge&logo=docker&logoColor=blue
+[docker-url]: https://www.docker.com
+[postgresql]: https://img.shields.io/badge/postgresql-000000?style=for-the-badge&logo=postgresql&logoColor=blue
+[postgresql-url]: https://www.postgresql.org
+[agdb]: https://img.shields.io/badge/agdb-000000?style=for-the-badge&logo=agdb&logoColor=brown
+[agdb-url]: https://github.com/agnesoft/agdb
+[openai]: https://img.shields.io/badge/openai-000000?style=for-the-badge&logo=openai&logoColor=pink
+[openai-url]: https://openai.com
 [Next.js]: https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
 [Next-url]: https://nextjs.org/
 [React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
 [React-url]: https://reactjs.org/
+[reveal]: https://img.shields.io/badge/reveal-000000?style=for-the-badge&logo=revealdotjs&logoColor=yellow
+[reveal-url]: https://revealjs.com
+[three]: https://img.shields.io/badge/three-000000?style=for-the-badge&logo=threedotjs&logoColor=yellow
+[three-url]: https://threejs.org/docs/#manual/en/introduction/Installation
