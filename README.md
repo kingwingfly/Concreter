@@ -99,6 +99,8 @@ Here's how you can init and start the project.
 
 ### Prerequisites
 - Postgres database
+- AgDb database
+- Python gRPC server
 
 #### Postgres
 If you wanna use Postgres on your local machine, you can follow the steps below.
