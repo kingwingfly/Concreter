@@ -56,7 +56,23 @@ impl IntoResponse for LoginError {
         debug!("{:<12} - web::LoginError {self:?}", "INTO_RES");
 
         // Create a placeholder Axum reponse.
-        let mut response = StatusCode::INTERNAL_SERVER_ERROR.into_response();
+        let mut response = match self {
+            LoginError::UserNotFound { .. } => {
+                (StatusCode::UNAUTHORIZED, "User not found").into_response()
+            }
+            LoginError::PasswordNotMatch { .. } => {
+                (StatusCode::UNAUTHORIZED, "Password not match").into_response()
+            }
+            LoginError::NoPwd => {
+                (StatusCode::UNAUTHORIZED, "No password on server stored").into_response()
+            }
+            LoginError::LoginOffFailed { .. } => {
+                (StatusCode::BAD_REQUEST, "Login off failed").into_response()
+            }
+            LoginError::RegisterFailed { .. } => {
+                (StatusCode::BAD_REQUEST, "Register failed").into_response()
+            }
+        };
 
         // Insert the Error into the reponse.
         response.extensions_mut().insert(self);
@@ -68,9 +84,17 @@ impl IntoResponse for LoginError {
 impl IntoResponse for AuthError {
     fn into_response(self) -> axum::response::Response {
         debug!("{:<12} - web::AuthError {self:?}", "INTO_RES");
-
+        // todo match errors
         // Create a placeholder Axum reponse.
-        let mut response = StatusCode::INTERNAL_SERVER_ERROR.into_response();
+        let mut response = match self {
+            AuthError::TokenNotInCookie
+            | AuthError::TokenWrongFormat
+            | AuthError::FailValidate
+            | AuthError::UserNotFound => (StatusCode::UNAUTHORIZED).into_response(),
+            AuthError::FailSetTokenCookie
+            | AuthError::CtxCreateFail
+            | AuthError::CtxNotInRequest => (StatusCode::INTERNAL_SERVER_ERROR).into_response(),
+        };
 
         // Insert the Error into the reponse.
         response.extensions_mut().insert(self);
