@@ -15,6 +15,8 @@ pub enum LoginError {
     NoPwd,
     #[snafu(display("Login off failed"), context(false))]
     LoginOffFailed { source: CookieError },
+    #[snafu(display("Register failed"), context(false))]
+    RegisterFailed { source: crate::model::DbError },
 }
 
 pub type LoginResult<T> = Result<T, LoginError>;

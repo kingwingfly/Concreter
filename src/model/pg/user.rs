@@ -29,8 +29,7 @@ impl Field for UserPg {
 }
 
 pub struct UserPgNew {
-    username: String,
-    pwd: String,
+    pub username: String,
 }
 
 impl Field for UserPgNew {
@@ -39,14 +38,11 @@ impl Field for UserPgNew {
     }
 
     fn values(&self) -> Vec<Value> {
-        vec![
-            Value::String(self.username.to_owned()),
-            Value::String(self.pwd.to_owned()),
-        ]
+        vec![Value::String(self.username.to_owned())]
     }
 
     fn keys(&self) -> Vec<String> {
-        vec!["username".to_string(), "pwd".to_string()]
+        vec!["username".to_string()]
     }
 }
 
@@ -75,7 +71,7 @@ mod pg_tests {
                 .unwrap();
             assert_eq!(user.username, "demo1");
             assert_eq!(user.id, 1000);
-            UserPgBmc::update_one_field(&ctx, &mm, user, "pwd", "123456")
+            UserPgBmc::update_one_field(&ctx, &mm, &user, "pwd", "123456")
                 .await
                 .unwrap();
             let user: UserPg = UserPgBmc::first_by(&ctx, &mm, "username", "demo1")
@@ -84,7 +80,6 @@ mod pg_tests {
             assert_eq!(user.pwd, Some("123456".to_string()));
             let user = UserPgNew {
                 username: "louis".to_string(),
-                pwd: "123456".to_string(),
             };
             let id = UserPgBmc::insert(&ctx, &mm, user).await.unwrap();
             let user: UserPg = UserPgBmc::first_by(&ctx, &mm, "id", id).await.unwrap();

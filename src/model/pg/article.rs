@@ -81,7 +81,7 @@ mod pg_tests {
                 .unwrap();
             assert_eq!(article.author, 1000);
             assert_eq!(article.content, "hello world");
-            ArticlePgBmc::update_one_field(&ctx, &mm, article, "content", "hello louis")
+            ArticlePgBmc::update_one_field(&ctx, &mm, &article, "content", "hello louis")
                 .await
                 .unwrap();
             let article: ArticlePg = ArticlePgBmc::first_by(&ctx, &mm, "author", 1000 as i64)

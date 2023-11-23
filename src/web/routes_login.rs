@@ -7,8 +7,8 @@ use tracing::debug;
 
 use crate::{
     ctx::Ctx,
-    model::{ModelManager, PgdbBmc, UserPg, UserPgBmc},
-    pwd::{self, ContentToHash},
+    model::{ModelManager, PgdbBmc, UserPg, UserPgBmc, UserPgNew},
+    pwd::{self, hash_pwd, ContentToHash},
     web::{self, login_error, remove_token_cookie},
 };
 
@@ -18,6 +18,7 @@ pub fn routes(mm: ModelManager) -> Router {
     Router::new()
         .route("/api/login", post(api_login_handler))
         .route("/api/logoff", post(api_logoff_handler))
+        .route("/api/register", post(api_register_handler))
         .with_state(mm)
 }
 
@@ -40,7 +41,7 @@ async fn api_login_handler(
     let user: UserPg = UserPgBmc::first_by(&root_ctx, &mm, "username", &username)
         .await
         .context(login_error::UserNotFound)?;
-    let user_id = user.id;
+    // let user_id = user.id;
 
     // -- Validate the password.
     let Some(pwd) = user.pwd else {
@@ -102,3 +103,41 @@ struct LogoffPayload {
     logoff: bool,
 }
 // endregion: --- Logoff
+
+// region:    --- Register
+
+async fn api_register_handler(
+    State(mm): State<ModelManager>,
+    cookies: Cookies,
+    Json(payload): Json<RegisterPayload>,
+) -> LoginResult<Json<Value>> {
+    let RegisterPayload {
+        username,
+        pwd: pwd_clear,
+    } = payload;
+    let ctx = Ctx::root_ctx();
+    let user_pg = UserPgNew { username };
+    let id = UserPgBmc::insert(&ctx, &mm, user_pg).await?;
+    let user: UserPg = UserPgBmc::first_by(&ctx, &mm, "id", id).await?;
+    let pwd = hash_pwd(&ContentToHash {
+        content: pwd_clear,
+        salt: user.pwd_salt,
+    })?;
+    UserPgBmc::update_one_field(&ctx, &mm, &user, "pwd", pwd).await?;
+    web::set_token_cookie(&cookies, &user.username, user.token_salt)?;
+
+    let body = Json(json!({
+        "result": {
+            "success": true
+        }
+    }));
+
+    Ok(body)
+}
+
+#[derive(Debug, Deserialize)]
+struct RegisterPayload {
+    username: String,
+    pwd: String,
+}
+// endregion: --- Register

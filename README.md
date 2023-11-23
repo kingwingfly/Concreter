@@ -298,6 +298,8 @@ Project Link: [https://github.com/kingwingfly/Concreter](https://github.com/king
 [Rust-url]: https://www.rust-lang.org
 [Python]: https://img.shields.io/badge/Python-000000?style=for-the-badge&logo=Python&logoColor=blue
 [Python-url]: https://www.python.org
+[axum]: https://img.shields.io/badge/axum-000000?style=for-the-badge&logo=axum&logoColor=white
+[axum-url]: https://github.com/tokio-rs/axum
 [typescript]: https://img.shields.io/badge/typescript-000000?style=for-the-badge&logo=typescript&logoColor=blue
 [typescript-url]: https://www.typescriptlang.org
 [gRPC]: https://img.shields.io/badge/gRPC-000000?style=for-the-badge&logo=gRPC&logoColor=yello

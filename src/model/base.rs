@@ -151,7 +151,7 @@ pub trait PgdbBmc {
     async fn update_one_field<D, F, V>(
         _ctx: &Ctx,
         mm: &ModelManager,
-        origin: D,
+        origin: &D,
         field: F,
         new_value: V,
     ) -> DbResult<i64>

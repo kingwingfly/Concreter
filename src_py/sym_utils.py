@@ -103,7 +103,7 @@ def run_code(code: str) -> Expr:
 
 if __name__ == "__main__":
     print("Start test ...")
-    code = convert(["h", "x"], r"f = h (h - 0.5 x)")
+    code = convert(["h", "x"], "f = h (h - 0.5 x)")
     print(code)
     expr = run_code(code)
     print(expr)

@@ -32,5 +32,14 @@ async fn main() -> Result<()> {
     );
     req_logoff.await?.print().await?;
 
+    // let register = hc.do_post(
+    //     "/api/register",
+    //     json!({
+    //         "username": "demo2",
+    //         "pwd": "welcome"
+    //     }),
+    // );
+    // register.await?.print().await?;
+
     Ok(())
 }
