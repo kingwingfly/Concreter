@@ -76,6 +76,15 @@
 
 * [![Next][Next.js]][Next-url]
 * [![React][React.js]][React-url]
+* Rust
+* Python
+* gRPC
+* Docker
+* PostgreSql
+* Agdb
+* OpenAi chatGPT
+* reveal.js
+* ifc.js
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -87,10 +96,10 @@
 Here's how you can init and start the project.
 
 ### Prerequisites
-- Postgres data base
+- Postgres database
 
 #### Postgres
-If you wanana use Postgres on your local machine, you can follow the steps below.
+If you wanna use Postgres on your local machine, you can follow the steps below.
 
 ```sh
 # Init a Postgres database with the following settings:
@@ -100,21 +109,23 @@ initdb -D /path/to/pgdata --locale=en_US.UTF-8 -U $USER -W
 pg_ctl -D /path/to/pgdata -l /path/to/log.log start
 
 # Create database:
-createdb concreter -O $USER
+createdb app_db -O $USER
 
 # Set the PgUrl environment variable:
-export PG_URL="postgres://app_user:dev_only_pwd@localhost/app_db"
+export PG_URL="postgres://$USER:password@localhost/app_db"
 
-# Follows is the commands to end the service:
+# Follows is the commands to end and clean the service:
 pg_ctl -D /path/to/pgdata stop
 rm -rf /path/to/pgdata
 ```
 
-If you wanana use Postgres with docker, you can follow the steps below.
+If you wanna use Postgres with docker, you can follow the steps below.
 ```sh
+docker pull postgres
+
 docker run --name postgres -e POSTGRES_PASSWORD=password -p 5432:5432 -d postgres
 
-export PgUrl=postgres://postgres:password@localhost:5432/postgres
+export PG_URL=postgres://postgres:password@localhost:5432/postgres
 
 # To end the service:
 docker stop postgres
@@ -131,10 +142,13 @@ export AG_FILE="/Users/louis/web/Concreter/agdata/db_test.ahdb"
 ```
 
 #### gRPC
-To enable symbolic computation, I use python's [`sympy`](https://docs.sympy.org/latest/index.html). For time limitation, I don't have enough time explore `pyO3`, so I just use `gRPC` to interact with python in Rust.
+To enable symbolic computation, I use python's [`sympy`](https://docs.sympy.org/latest/index.html). For time limitation, I don't have enough time to explore `pyO3`, so I just use `gRPC` to interact with python in Rust.
 
-I suggest use docker:
+I suggest using docker:
 ```sh
+# set env variables
+TODO
+
 # At the root of the project, run:
 docker build -t rpc-py .
 docker run -it -p 50051:50051 -v ./proto:/usr/src/app/proto -v ./src_py:/usr/src/app/src_py --rm --name rpc-py rpc-py
@@ -151,7 +165,7 @@ conda create -n py310 python=3.10
 # activate the virtual environment
 source venv/bin/activate
 # or
-conda activate py311
+conda activate py310
 
 # install the dependencies
 pip install -r requirements.txt
@@ -163,7 +177,7 @@ pip install --upgrade openai
 # generate the gRPC python code
 export PB="./src_py" && python -m grpc_tools.protoc -I./proto --python_out=$PB --pyi_out=$PB --grpc_python_out=$PB proto/sym.proto
 
-# set server address and start the server
+# set server address, env varibles and start the server
 Todo
 
 # Ctrl + C to end the service, and deactivate the virtual environment
@@ -171,7 +185,7 @@ deactivate
 # or
 conda deactivate
 ```
-For both method, you may need proxy configured. For docker, the host network should set proxy. For local machine, set the proxy in `src_py/openai_utils.py`:
+For both methods, you may need proxy configured. For docker, the host network should set proxy. For local machine, set the proxy in `src_py/openai_utils.py`:
 ```python
 client = OpenAI(
     # In docker, do not need to set proxy, for it uses host network which does.
