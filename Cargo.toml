@@ -39,6 +39,7 @@ tracing = "0.1.40"
 tracing-subscriber = { version = "^0.3", features = ["env-filter"] }
 url = "2.4.1"
 # other
+regex = "1.10.2"
 
 [build-dependencies]
 tonic-build = {version = "^0.10"}

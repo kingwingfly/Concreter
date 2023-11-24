@@ -5,12 +5,12 @@ from typing import ClassVar as _ClassVar, Optional as _Optional
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class NerRequest(_message.Message):
-    __slots__ = ["text", "region"]
+    __slots__ = ["text", "field"]
     TEXT_FIELD_NUMBER: _ClassVar[int]
-    REGION_FIELD_NUMBER: _ClassVar[int]
+    FIELD_FIELD_NUMBER: _ClassVar[int]
     text: str
-    region: str
-    def __init__(self, text: _Optional[str] = ..., region: _Optional[str] = ...) -> None: ...
+    field: str
+    def __init__(self, text: _Optional[str] = ..., field: _Optional[str] = ...) -> None: ...
 
 class NerReply(_message.Message):
     __slots__ = ["ner_ret"]

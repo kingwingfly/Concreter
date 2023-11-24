@@ -19,22 +19,8 @@ class SymServer(SymServicer):
         return HelloReply(message=f"Hello {request.name}!")
 
     def ConvertMdFormula(self, request: ConvertMdRequest, context):
-        code = convert(request.symbols, request.md)
-        formula = run_code(code)
-        if request.symbol == "":  # Do not do substitution
-            return ConvertMdReply(formula=str(formula))
-        symbol = Symbol(request.symbol)
-        match request.type:
-            case ValueType.NUMBER:
-                value = float(request.value)
-            case ValueType.EXPR:
-                code = convert(request.symbols, request.value)
-                value = run_code(code)
-            case _:
-                raise NotImplementedError("unreachable")
-        formula = formula.subs(symbol, value)
-        formula = formula.factor() if isinstance(formula, Expr) else formula
-        return ConvertMdReply(formula=str(formula))
+        code = convert(request.md)
+        return ConvertMdReply(sym=code)
 
 
 SYSTEM = "You are a helpful assistant designed to convert formulas in markdown or latex \
@@ -51,9 +37,8 @@ client = OpenAI(
 )
 
 
-def convert(symbols: str | list[str], formula: str) -> str:
-    q = f"Only these are symbols: {symbols}, besides some common coefficients; \
-You should only convert the right side of ${formula}$ to a python function \
+def convert(formula: str) -> str:
+    q = f"You should only convert the right side of ${formula}$ to a python function \
 signatured `formula() -> sympy.Expr` with python's sympy library."
     print(f"Asking GPT: \n{q}")
     while True:
@@ -71,14 +56,20 @@ signatured `formula() -> sympy.Expr` with python's sympy library."
                     },
                 ],
             )
+            content = completion.choices[0].message.content
+            print(f"GPT answer:\n {content}\n")
+            code = extract(content if content else "")
+            try:
+                _ = run_code(code)
+            except Exception as e:
+                print(e)
+                continue
         except Exception as e:
             print(e)
             sleep(20)
             continue
         break
-    content = completion.choices[0].message.content
-    print(f"GPT answer:\n {content}\n")
-    return extract(content if content else "")
+    return code
 
 
 def extract(content: str) -> str:
@@ -103,7 +94,7 @@ def run_code(code: str) -> Expr:
 
 if __name__ == "__main__":
     print("Start test ...")
-    code = convert(["h", "x"], "f = h (h - 0.5 x)")
+    code = convert("f = h (h - 0.5 x)")
     print(code)
     expr = run_code(code)
     print(expr)

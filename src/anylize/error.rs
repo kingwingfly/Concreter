@@ -7,8 +7,8 @@ pub enum AnalyzeError {
     FailedRpc { source: tonic::Status },
     #[snafu(display("Bad reply format"), context(false))]
     BadReplyFormat { source: serde_json::Error },
-    #[snafu(display("Failed to store"))]
-    FailedToStore,
+    #[snafu(display("Failed to store"), context(false))]
+    FailedToStore { source: crate::model::DbError },
 }
 
 pub type AnalyzeResult<T> = Result<T, AnalyzeError>;

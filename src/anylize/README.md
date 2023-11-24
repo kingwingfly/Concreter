@@ -12,3 +12,6 @@ To analyze and store the information about an article, a few steps are required:
     - For each formula, store as `formula` node in agdb. Establish `Has` with the article.
     - The node's attributes(KeyValues) is the attributes of the formula.
     - For example: `{"E=mc^2": { "sympy": "def formula() -> sym.Expr: ..."}}`, we store node "E=mc^2" as `formula` node, whose attribute `sympy` is "def formula() -> sym.Expr: ...".
+
+
+However, I don't have enough time to insert the attris in Agdb, so I just store all the information of the entities and formulas in postgresql, the nodes in agdb only contain the id of postgres.

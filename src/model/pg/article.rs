@@ -11,6 +11,7 @@ pub struct ArticlePg {
     pub author: i64,
     pub title: String,
     pub content: String,
+    pub field: String,
     pub created_at: chrono::DateTime<chrono::Local>,
     pub updated_at: chrono::DateTime<chrono::Local>,
 }
@@ -33,6 +34,7 @@ pub struct ArticleNew {
     pub author: i64,
     pub title: String,
     pub content: String,
+    pub field: String,
 }
 
 impl Field for ArticleNew {
@@ -45,6 +47,7 @@ impl Field for ArticleNew {
             Value::Int(self.author),
             Value::String(self.title.to_owned()),
             Value::String(self.content.to_owned()),
+            Value::String(self.field.to_owned()),
         ]
     }
 
@@ -53,6 +56,7 @@ impl Field for ArticleNew {
             "author".to_string(),
             "title".to_string(),
             "content".to_string(),
+            "field".to_string(),
         ]
     }
 }
@@ -93,6 +97,7 @@ mod pg_tests {
                 author: 1000,
                 title: "hello again".to_string(),
                 content: "hello again".to_string(),
+                field: "".to_string(),
             };
             let id = ArticlePgBmc::insert(&ctx, &mm, article).await.unwrap();
             let article: ArticlePg = ArticlePgBmc::first_by(&ctx, &mm, "id", id).await.unwrap();

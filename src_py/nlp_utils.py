@@ -13,7 +13,7 @@ from nlp_pb2 import (
 
 class NlpServer(NlpServicer):
     def Ner(self, request: NerRequest, context):
-        ner_ret = ner(request.text, request.region)
+        ner_ret = ner(request.text, request.field)
         return NerReply(ner_ret=ner_ret)
 
 
@@ -26,13 +26,15 @@ client = OpenAI(
 )
 
 
-def ner(text: str, region: str) -> str:
+def ner(text: str, field: str) -> str:
     s = f"You are an assistant capable of performing named entity recognition and \
-proficient in knowledge related to {region}. I need you to extract the named entities \
+proficient in knowledge related to {field}. I need you to extract the named entities \
 from the following content and return each named entity in JSON format along with **more \
-detailed relevant information**. Remember to use the Markdown syntax with \"```\" to enclose the JSON"
-    q = f"Following text is ablout {region}. Please Perform named entity recognition on the following \
-content and return each named entity in JSON format along with more detailed relevant information: \n{text}"
+detailed relevant information**. Remember to use the Markdown syntax with \"```\" to enclose the JSON, \
+besides, use entity name as key and attributes as value, and in attributes, use attribute name as key. \
+Remember to use your knowledge about {field} to enrich the attributes."
+    q = f"Following text is about {field}. Please Perform named entity recognition on the following \
+content and return each named entity in JSON format along **with more detailed relevant information**: \n{text}"
     print(f"Asking GPT: \n{q}")
     while True:
         try:

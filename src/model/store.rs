@@ -68,6 +68,7 @@ mod test {
                 author: 1000,
                 title: "hello".to_owned(),
                 content: "world".to_owned(),
+                field: "".to_owned(),
             });
             let json = json!({
                 "name": {
