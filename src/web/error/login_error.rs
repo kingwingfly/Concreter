@@ -4,8 +4,10 @@ use tracing::debug;
 
 use crate::model::DbError;
 
+use super::CookieError;
+
 #[derive(Debug, Snafu)]
-#[snafu(module, visibility(pub), context(suffix(false)))]
+#[snafu(visibility(pub), context(suffix(false)))]
 pub enum LoginError {
     #[snafu(display("User not found"))]
     UserNotFound { source: DbError },
@@ -20,36 +22,6 @@ pub enum LoginError {
 }
 
 pub type LoginResult<T> = Result<T, LoginError>;
-
-#[derive(Debug, Snafu, Clone)]
-#[snafu(module, visibility(pub), context(suffix(false)))]
-pub enum AuthError {
-    #[snafu(display("TokenNotInCookie"))]
-    TokenNotInCookie,
-    #[snafu(display("TokenWrongFormat"))]
-    TokenWrongFormat,
-    #[snafu(display("UserNotFound"))]
-    UserNotFound,
-    #[snafu(display("AuthFailValidate"))]
-    FailValidate,
-    #[snafu(display("CannotSetTokenCookie"))]
-    FailSetTokenCookie,
-    #[snafu(display("CtxCreateFail"))]
-    CtxCreateFail,
-    #[snafu(display("CtxNotInRequest"))]
-    CtxNotInRequest,
-}
-
-pub type AuthResult<T> = Result<T, AuthError>;
-
-#[derive(Debug, Snafu)]
-#[snafu(module, visibility(pub), context(suffix(false)))]
-pub enum CookieError {
-    #[snafu(display("Add or Remove cookie failed"), context(false))]
-    Cookie { source: crate::token::TokenError },
-}
-
-pub type CookieResult<T> = Result<T, CookieError>;
 
 impl IntoResponse for LoginError {
     fn into_response(self) -> axum::response::Response {
@@ -72,28 +44,6 @@ impl IntoResponse for LoginError {
             LoginError::RegisterFailed { .. } => {
                 (StatusCode::BAD_REQUEST, "Register failed").into_response()
             }
-        };
-
-        // Insert the Error into the reponse.
-        response.extensions_mut().insert(self);
-
-        response
-    }
-}
-
-impl IntoResponse for AuthError {
-    fn into_response(self) -> axum::response::Response {
-        debug!("{:<12} - web::AuthError {self:?}", "INTO_RES");
-        // todo match errors
-        // Create a placeholder Axum reponse.
-        let mut response = match self {
-            AuthError::TokenNotInCookie
-            | AuthError::TokenWrongFormat
-            | AuthError::FailValidate
-            | AuthError::UserNotFound => (StatusCode::UNAUTHORIZED).into_response(),
-            AuthError::FailSetTokenCookie
-            | AuthError::CtxCreateFail
-            | AuthError::CtxNotInRequest => (StatusCode::INTERNAL_SERVER_ERROR).into_response(),
         };
 
         // Insert the Error into the reponse.

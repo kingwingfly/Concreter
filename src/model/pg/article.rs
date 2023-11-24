@@ -2,9 +2,10 @@ use crate::model::Value;
 
 use super::base::{Field, PgdbBmc};
 
+use serde::Serialize;
 use sqlx::FromRow;
 
-#[derive(FromRow)]
+#[derive(FromRow, Serialize)]
 pub struct ArticlePg {
     pub id: i64,
     pub author: i64,

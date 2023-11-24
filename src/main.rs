@@ -28,7 +28,7 @@ use crate::{
     web::{
         mw_auth::{mw_ctx_require, mw_ctx_resolve},
         mw_res_map::mw_reponse_map,
-        routes_login, routes_static, rpc,
+        routes_article, routes_login, routes_static, rpc,
     },
 };
 
@@ -51,6 +51,7 @@ async fn main() -> AppResult<()> {
 
     let routes_all = Router::new()
         .merge(routes_login::routes(mm.clone()))
+        .merge(routes_article::routes(mm.clone()))
         .nest("/api", routes_rpc)
         .layer(
             ServiceBuilder::new()

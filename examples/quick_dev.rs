@@ -41,5 +41,13 @@ async fn main() -> Result<()> {
     // );
     // register.await?.print().await?;
 
+    let req_article = hc.do_post(
+        "/api/article",
+        json!({
+            "id": 1000
+        }),
+    );
+    req_article.await?.print().await?;
+
     Ok(())
 }
