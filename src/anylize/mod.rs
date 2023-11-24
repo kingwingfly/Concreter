@@ -1,6 +1,7 @@
 mod article;
 mod error;
 
+pub use article::*;
 pub use error::*;
 use regex::Regex;
 use std::sync::OnceLock;
@@ -15,14 +16,20 @@ pub trait Analyzer {
     async fn analyze(ctx: &Ctx, mm: &ModelManager, article: ArticleNew) -> AnalyzeResult<()> {
         let content = article.content.clone();
         let field = article.field.clone();
-        let mut to_store = ToStore::new(article);
-        Self::ner(&mut to_store, &content, &field).await?;
-        Self::sym(&mut to_store, &content).await?;
-        to_store.store(ctx, mm).await?;
+        let to_store = ToStore::new(ctx, mm, article).await?;
+        Self::ner(ctx, mm, &to_store, &content, &field).await?;
+        Self::sym(ctx, mm, &to_store, &content).await?;
+        to_store.finish(ctx, mm).await?;
         Ok(())
     }
 
-    async fn ner(to_store: &mut ToStore, text: &str, field: &str) -> AnalyzeResult<()> {
+    async fn ner(
+        ctx: &Ctx,
+        mm: &ModelManager,
+        to_store: &ToStore,
+        text: &str,
+        field: &str,
+    ) -> AnalyzeResult<()> {
         let mut nlp_client = nlp_client().await;
         let chunk_size = 496;
         for c in text.chars().collect::<Vec<_>>().chunks(chunk_size) {
@@ -34,19 +41,26 @@ pub trait Analyzer {
             // {"name": {"attr_name1": "attr1", "attr_name2": "attr2"}, ...}
             let ner_json: serde_json::Value = serde_json::from_str(&resp.ner_ret)?;
             for (entity, attris) in ner_json.as_object().unwrap() {
-                to_store.add_entity(entity.clone(), attris.clone());
+                to_store
+                    .add_entity(ctx, mm, entity.clone(), attris.clone())
+                    .await?;
             }
         }
         Ok(())
     }
 
-    async fn sym(to_store: &mut ToStore, text: &str) -> AnalyzeResult<()> {
+    async fn sym(
+        ctx: &Ctx,
+        mm: &ModelManager,
+        to_store: &ToStore,
+        text: &str,
+    ) -> AnalyzeResult<()> {
         let mut client = sym_client().await;
         let formulas = extract_formulas(text);
         for md in formulas {
             let req = ConvertMdRequest { md: md.to_owned() };
             let resp = client.convert_md_formula(req).await?.into_inner();
-            to_store.add_formula(md, resp.sym);
+            to_store.add_formula(ctx, mm, md, resp.sym).await?;
         }
         Ok(())
     }

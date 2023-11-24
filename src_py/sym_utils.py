@@ -38,7 +38,7 @@ client = OpenAI(
 
 
 def convert(formula: str) -> str:
-    q = f"You should only convert the right side of ${formula}$ to a python function \
+    q = f"You should only convert the correct side of ${formula}$ to a python function \
 signatured `formula() -> sympy.Expr` with python's sympy library."
     print(f"Asking GPT: \n{q}")
     while True:
@@ -94,11 +94,7 @@ def run_code(code: str) -> Expr:
 
 if __name__ == "__main__":
     print("Start test ...")
-    code = convert("f = h (h - 0.5 x)")
+    code = convert(r"\sum_{i=1}^{n}x_{ij} = a_j")
     print(code)
     expr = run_code(code)
-    print(expr)
-    k, h, x = symbols("k h x")
-    expr = expr.subs(x, k * h)
-    expr = expr.factor() if isinstance(expr, Expr) else expr
     print(expr)

@@ -51,14 +51,20 @@ content and return each named entity in JSON format along **with more detailed r
                     },
                 ],
             )
+            content = completion.choices[0].message.content
+            print(f"GPT answer:\n {content}\n")
+            ret = extract(content if content else "")
+            try:
+                json.loads(ret)
+            except Exception as e:
+                print(e)
+                continue
         except Exception as e:
             print(e)
             sleep(20)
             continue
         break
-    content = completion.choices[0].message.content
-    print(f"GPT answer:\n {content}\n")
-    return extract(content if content else "")
+    return ret
 
 
 def extract(content: str) -> str:

@@ -218,7 +218,7 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 <!-- ROADMAP -->
 ## Roadmap
 
-- [ ] Feature 1
+- [ ] Use [SeaORM](https://github.com/SeaQL/sea-orm)
 - [ ] Feature 2
 - [ ] Feature 3
     - [ ] Nested Feature

@@ -24,13 +24,13 @@ async fn main() -> Result<()> {
     let after_login_test = hc.do_get("/api/rpc");
     after_login_test.await?.print().await?;
 
-    let req_logoff = hc.do_post(
-        "/api/logoff",
-        json!({
-            "logoff": true
-        }),
-    );
-    req_logoff.await?.print().await?;
+    // let req_logoff = hc.do_post(
+    //     "/api/logoff",
+    //     json!({
+    //         "logoff": true
+    //     }),
+    // );
+    // req_logoff.await?.print().await?;
 
     // let register = hc.do_post(
     //     "/api/register",
@@ -41,13 +41,18 @@ async fn main() -> Result<()> {
     // );
     // register.await?.print().await?;
 
-    let req_article = hc.do_post(
+    let req_article = hc.do_get("/api/article/1000");
+    req_article.await?.print().await?;
+
+    let req_upload = hc.do_post(
         "/api/article",
         json!({
-            "id": 1000
+            "title": "upload test",
+            "content": "upload test",
+            "field": "science"
         }),
     );
-    req_article.await?.print().await?;
+    req_upload.await?.print().await?;
 
     Ok(())
 }

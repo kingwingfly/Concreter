@@ -30,6 +30,7 @@ impl Field for ArticlePg {
     }
 }
 
+#[derive(Clone)]
 pub struct ArticleNew {
     pub author: i64,
     pub title: String,

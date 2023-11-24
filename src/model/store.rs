@@ -1,3 +1,4 @@
+use agdb::DbId;
 use serde_json::Value;
 
 use crate::{
@@ -6,49 +7,52 @@ use crate::{
 };
 
 use super::{
-    AgdbNodeBmc, ArticleAg, ArticleAgBmc, ArticleNew, ArticlePgBmc, DbResult, EntityAg, EntityNew,
-    FormulaAg, FormulaNew, ModelManager, PgdbBmc,
+    AgdbNodeBmc, ArticleAg, ArticleAgBmc, ArticleNew, ArticlePg, ArticlePgBmc, DbResult, EntityAg,
+    EntityNew, FormulaAg, FormulaNew, ModelManager, PgdbBmc,
 };
 
 pub struct ToStore {
-    article: ArticleNew,
-    entities: Vec<EntityNew>,
-    formulas: Vec<FormulaNew>,
+    pg_id: i64,
+    ag_id: DbId,
 }
 
 impl ToStore {
-    pub fn new(article: ArticleNew) -> Self {
-        Self {
-            article,
-            entities: vec![],
-            formulas: vec![],
-        }
+    pub async fn new(ctx: &Ctx, mm: &ModelManager, article: ArticleNew) -> DbResult<Self> {
+        let pg_id = ArticlePgBmc::insert(ctx, mm, article).await?;
+        let ag_id = ArticleAgBmc::update(ctx, mm, ArticleAg { db_id: None, pg_id }).await?;
+        Ok(Self { pg_id, ag_id })
     }
 
-    pub async fn store(self, ctx: &Ctx, mm: &ModelManager) -> DbResult<()> {
-        let pg_id = ArticlePgBmc::insert(ctx, mm, self.article).await?;
-        let article_ag_id = ArticleAgBmc::update(ctx, mm, ArticleAg { db_id: None, pg_id }).await?;
-        for entity in self.entities {
-            let pg_id = EntityPgBmc::insert(ctx, mm, entity).await?;
-            let entity_ag_id =
-                EntityAgBmc::update(ctx, mm, EntityAg { db_id: None, pg_id }).await?;
-            HasBmc::connect(ctx, mm, article_ag_id, entity_ag_id).await?;
-        }
-        for formula in self.formulas {
-            let pg_id = FormulaPgBmc::insert(ctx, mm, formula).await?;
-            let formula_ag_id =
-                FormulaAgBmc::update(ctx, mm, FormulaAg { db_id: None, pg_id }).await?;
-            HasBmc::connect(ctx, mm, article_ag_id, formula_ag_id).await?;
-        }
+    pub async fn finish(&self, ctx: &Ctx, mm: &ModelManager) -> DbResult<()> {
+        let origin: ArticlePg = ArticlePgBmc::first_by(ctx, mm, "id", self.pg_id).await?;
+        ArticlePgBmc::update_one_field(ctx, mm, &origin, "status", "finished").await?;
         Ok(())
     }
 
-    pub fn add_entity(&mut self, name: String, attris: Value) {
-        self.entities.push(EntityNew { name, attris })
+    pub async fn add_entity(
+        &self,
+        ctx: &Ctx,
+        mm: &ModelManager,
+        name: String,
+        attris: Value,
+    ) -> DbResult<()> {
+        let pg_id = EntityPgBmc::insert(ctx, mm, EntityNew { name, attris }).await?;
+        let entity_ag_id = EntityAgBmc::update(ctx, mm, EntityAg { db_id: None, pg_id }).await?;
+        HasBmc::connect(ctx, mm, self.ag_id, entity_ag_id).await?;
+        Ok(())
     }
 
-    pub fn add_formula(&mut self, md: String, sym: String) {
-        self.formulas.push(FormulaNew { md, sym })
+    pub async fn add_formula(
+        &self,
+        ctx: &Ctx,
+        mm: &ModelManager,
+        md: String,
+        sym: String,
+    ) -> DbResult<()> {
+        let pg_id = FormulaPgBmc::insert(ctx, mm, FormulaNew { md, sym }).await?;
+        let formula_ag_id = FormulaAgBmc::update(ctx, mm, FormulaAg { db_id: None, pg_id }).await?;
+        HasBmc::connect(ctx, mm, self.ag_id, formula_ag_id).await?;
+        Ok(())
     }
 }
 
@@ -64,12 +68,18 @@ mod test {
         run_test(async {
             let ctx = Ctx::root_ctx();
             let mm = init_test().await;
-            let mut to_store = ToStore::new(ArticleNew {
-                author: 1000,
-                title: "hello".to_owned(),
-                content: "world".to_owned(),
-                field: "".to_owned(),
-            });
+            let to_store = ToStore::new(
+                &ctx,
+                &mm,
+                ArticleNew {
+                    author: 1000,
+                    title: "hello".to_owned(),
+                    content: "world".to_owned(),
+                    field: "".to_owned(),
+                },
+            )
+            .await
+            .unwrap();
             let json = json!({
                 "name": {
                     "attr_name1": "attr1",
@@ -80,9 +90,11 @@ mod test {
                 }
             });
             for (name, attris) in json.as_object().unwrap() {
-                to_store.add_entity(name.to_owned(), attris.to_owned());
+                to_store
+                    .add_entity(&ctx, &mm, name.to_owned(), attris.to_owned())
+                    .await
+                    .unwrap();
             }
-            to_store.store(&ctx, &mm).await.unwrap();
         })
     }
 }
