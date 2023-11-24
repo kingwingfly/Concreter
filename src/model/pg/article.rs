@@ -30,9 +30,9 @@ impl Field for ArticlePg {
 }
 
 pub struct ArticleNew {
-    author: i64,
-    title: String,
-    content: String,
+    pub author: i64,
+    pub title: String,
+    pub content: String,
 }
 
 impl Field for ArticleNew {

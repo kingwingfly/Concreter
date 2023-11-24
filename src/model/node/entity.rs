@@ -3,13 +3,13 @@ use crate::{impl_agdb_node_bmc, node_bmc_test};
 use agdb::{DbId, UserValue};
 
 #[derive(Debug, UserValue, Default)]
-pub struct FormulaAg {
+pub struct EntityAg {
     pub db_id: Option<DbId>,
     pub pg_id: i64,
 }
 
-pub struct FormulaAgBmc;
+pub struct EntityAgBmc;
 
-impl_agdb_node_bmc!(FormulaAgBmc, FormulaAg, "formulas");
+impl_agdb_node_bmc!(EntityAgBmc, EntityAg, "entities");
 
-node_bmc_test!(FormulaAgBmc, FormulaAg, "formulas");
+node_bmc_test!(EntityAgBmc, EntityAg, "entities");

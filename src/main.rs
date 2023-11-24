@@ -1,3 +1,4 @@
+mod anylize;
 mod config;
 mod ctx;
 mod error;

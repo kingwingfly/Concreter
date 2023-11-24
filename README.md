@@ -157,7 +157,7 @@ TODO
 docker build -t rpc-py .
 docker run -it -p 50051:50051 -v ./proto:/usr/src/app/proto -v ./src_py:/usr/src/app/src_py --rm --name rpc-py rpc-py
 ```
-You can also choose to run on your machine. But python's rpc cannot well-support MacOS M1 now. And the python version `sympy` supports is up to `3.10`.
+You can also choose to run on your host machine. But python's rpc cannot well-support ARM Mac now. And the python version `sympy` supports is up to `3.10`.
 
 To start the python's gRPC server, you can run the following command:
 ```sh
@@ -173,7 +173,7 @@ conda activate py310
 
 # install the dependencies
 pip install -r requirements.txt
-# For Arm Mac, use
+# For ARM Mac, use
 pip install socksio
 conda install --file requirements.txt
 pip install --upgrade openai

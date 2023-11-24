@@ -8,7 +8,7 @@ use crate::config::config;
 
 use super::error::RpcResult;
 
-async fn sym_client() -> SymClient<Channel> {
+pub async fn sym_client() -> SymClient<Channel> {
     static SYM_CLIENT: OnceCell<SymClient<Channel>> = OnceCell::const_new();
     SYM_CLIENT
         .get_or_init(|| async {

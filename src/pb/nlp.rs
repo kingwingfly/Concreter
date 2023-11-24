@@ -8,7 +8,7 @@ use crate::config::config;
 
 use super::error::RpcResult;
 
-async fn nlp_client() -> NlpClient<Channel> {
+pub async fn nlp_client() -> NlpClient<Channel> {
     static NLP_CLIENT: OnceCell<NlpClient<Channel>> = OnceCell::const_new();
     NLP_CLIENT
         .get_or_init(|| async {

@@ -1,0 +1,14 @@
+use snafu::Snafu;
+
+#[derive(Debug, Snafu)]
+#[snafu(module, visibility(pub), context(suffix(false)))]
+pub enum AnalyzeError {
+    #[snafu(display("Failed RPC"), context(false))]
+    FailedRpc { source: tonic::Status },
+    #[snafu(display("Bad reply format"), context(false))]
+    BadReplyFormat { source: serde_json::Error },
+    #[snafu(display("Failed to store"))]
+    FailedToStore,
+}
+
+pub type AnalyzeResult<T> = Result<T, AnalyzeError>;
