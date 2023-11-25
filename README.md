@@ -197,6 +197,17 @@ client = OpenAI(
 )
 ```
 
+#### Frontend
+We use `nextjs` as the frontend framework. To start the frontend, you can run the following command:
+```sh
+npm i && npm run build
+```
+This will static export the frontend to `out` folder. Then:
+```sh
+export SERVICE_WEB_FOLDER="./frontend/out"
+```
+To serve the frontend with `axum`.
+
 ### Installation
 Todo
 
