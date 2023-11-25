@@ -26,5 +26,5 @@ SERVICE_TOKEN_DURATION_SEC="1800" # 30 minutes
 
 # This will be relative to Cargo.toml
 # In deployed images, probably use absolute path.
-SERVICE_WEB_FOLDER="web-folder/"
+SERVICE_WEB_FOLDER="frontend/out"
 RPC_ADDR="http://localhost:50051"
