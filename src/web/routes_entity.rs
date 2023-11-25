@@ -3,6 +3,7 @@ use axum::{
     routing::get,
     Json, Router,
 };
+use tracing::debug;
 
 use crate::{
     ctx::Ctx,
@@ -21,6 +22,7 @@ async fn api_entity_get_handler(
     State(mm): State<ModelManager>,
     Path(id): Path<i64>,
 ) -> EntityResult<Json<EntityPg>> {
+    debug!("{:<12} - api_entity_get_handler", "HANDLER");
     let ctx = Ctx::root_ctx();
     let entity: EntityPg = EntityPgBmc::first_by(&ctx, &mm, "id", id).await?;
     let body = Json::from(entity);

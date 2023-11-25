@@ -3,6 +3,7 @@ use axum::{
     routing::get,
     Json, Router,
 };
+use tracing::debug;
 
 use crate::{
     ctx::Ctx,
@@ -21,6 +22,7 @@ async fn api_formula_get_handler(
     State(mm): State<ModelManager>,
     Path(id): Path<i64>,
 ) -> EntityResult<Json<FormulaPg>> {
+    debug!("{:<12} - api_formula_get_handler", "HANDLER");
     let ctx = Ctx::root_ctx();
     let formula: FormulaPg = FormulaPgBmc::first_by(&ctx, &mm, "id", id).await?;
     let body = Json::from(formula);
