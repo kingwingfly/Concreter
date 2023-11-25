@@ -106,7 +106,7 @@ mod tests {
     #[tokio::test]
     async fn baidu_ner_test() {
         let ner = Ner::new();
-        let mut f = fs::File::open("examples/建筑工程合同管理.md").unwrap();
+        let mut f = fs::File::open("examples/建筑智能施工技术.md").unwrap();
         let mut buffer = String::new();
         f.read_to_string(&mut buffer).unwrap();
         let chunk_size = 96;

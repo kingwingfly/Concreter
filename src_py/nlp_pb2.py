@@ -13,7 +13,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\tnlp.proto\x12\x03nlp\"*\n\nNerRequest\x12\x0c\n\x04text\x18\x01 \x01(\t\x12\x0e\n\x06region\x18\x02 \x01(\t\"\x1b\n\x08NerReply\x12\x0f\n\x07ner_ret\x18\x01 \x01(\t2,\n\x03Nlp\x12%\n\x03Ner\x12\x0f.nlp.NerRequest\x1a\r.nlp.NerReplyb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\tnlp.proto\x12\x03nlp\")\n\nNerRequest\x12\x0c\n\x04text\x18\x01 \x01(\t\x12\r\n\x05\x66ield\x18\x02 \x01(\t\"\x1b\n\x08NerReply\x12\x0f\n\x07ner_ret\x18\x01 \x01(\t2,\n\x03Nlp\x12%\n\x03Ner\x12\x0f.nlp.NerRequest\x1a\r.nlp.NerReplyb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -21,9 +21,9 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'nlp_pb2', _globals)
 if _descriptor._USE_C_DESCRIPTORS == False:
   DESCRIPTOR._options = None
   _globals['_NERREQUEST']._serialized_start=18
-  _globals['_NERREQUEST']._serialized_end=60
-  _globals['_NERREPLY']._serialized_start=62
-  _globals['_NERREPLY']._serialized_end=89
-  _globals['_NLP']._serialized_start=91
-  _globals['_NLP']._serialized_end=135
+  _globals['_NERREQUEST']._serialized_end=59
+  _globals['_NERREPLY']._serialized_start=61
+  _globals['_NERREPLY']._serialized_end=88
+  _globals['_NLP']._serialized_start=90
+  _globals['_NLP']._serialized_end=134
 # @@protoc_insertion_point(module_scope)

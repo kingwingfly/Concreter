@@ -107,6 +107,7 @@ pub trait PgdbBmc {
             match v {
                 Value::Int(v) => q = q.bind(v),
                 Value::String(v) => q = q.bind(v),
+                Value::Json(v) => q = q.bind(v),
             }
         }
         let id = q.fetch_one(mm.pgdb()).await?.try_get(0)?;
@@ -151,7 +152,7 @@ pub trait PgdbBmc {
     async fn update_one_field<D, F, V>(
         _ctx: &Ctx,
         mm: &ModelManager,
-        origin: D,
+        origin: &D,
         field: F,
         new_value: V,
     ) -> DbResult<i64>
@@ -177,6 +178,7 @@ pub trait PgdbBmc {
 pub enum Value {
     Int(i64),
     String(String),
+    Json(serde_json::Value),
 }
 
 pub trait Field {

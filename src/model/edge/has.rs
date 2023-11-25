@@ -12,4 +12,4 @@ pub struct HasBmc;
 
 impl_agdb_edge_bmc!(HasBmc, Has, "has");
 
-edge_bmc_test!(HasBmc, ArticleAg, ArticleAgBmc, WordAg, WordAgBmc);
+edge_bmc_test!(HasBmc, ArticleAg, ArticleAgBmc, EntityAg, EntityAgBmc);

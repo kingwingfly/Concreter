@@ -23,7 +23,7 @@ macro_rules! node_bmc_test {
             use $crate::ctx::Ctx;
 
             #[test]
-            fn node_test() {
+            fn ag_test() {
                 run_test(async {
                     let ctx = Ctx::root_ctx();
                     let mut mm = init_test().await;
@@ -74,7 +74,7 @@ macro_rules! edge_bmc_test {
             use $crate::model::{$self, $self_bmc};
 
             #[test]
-            fn edge_test() {
+            fn ag_test() {
                 run_test(async {
                     let ctx = Ctx::root_ctx();
                     let mut mm = init_test().await;
@@ -98,7 +98,7 @@ macro_rules! edge_bmc_test {
             use $crate::model::{$from, $from_bmc, $to, $to_bmc};
 
             #[test]
-            fn edge_test() {
+            fn ag_test() {
                 run_test(async {
                     let ctx = Ctx::root_ctx();
                     let mut mm = init_test().await;

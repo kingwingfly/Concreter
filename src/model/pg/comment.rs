@@ -85,7 +85,7 @@ mod pg_tests {
                 .unwrap();
             assert_eq!(comment.author, 1000);
             assert_eq!(comment.content, "hello world");
-            CommentPgBmc::update_one_field(&ctx, &mm, comment, "content", "hello louis")
+            CommentPgBmc::update_one_field(&ctx, &mm, &comment, "content", "hello louis")
                 .await
                 .unwrap();
             let comment: CommentPg = CommentPgBmc::first_by(&ctx, &mm, "id", 1 as i64)

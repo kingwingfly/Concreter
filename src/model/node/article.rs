@@ -4,8 +4,8 @@ use agdb::{DbId, UserValue};
 
 #[derive(Debug, UserValue, Default)]
 pub struct ArticleAg {
-    db_id: Option<DbId>,
-    pg_id: i64,
+    pub db_id: Option<DbId>,
+    pub pg_id: i64,
 }
 
 pub struct ArticleAgBmc;

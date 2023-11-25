@@ -37,7 +37,7 @@ class SymServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def ConvertMdFormula(self, request, context):
-        """Convert md formula and substitud symbol with value(or expr)
+        """Convert md formula returning sympy function
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')

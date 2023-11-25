@@ -8,7 +8,7 @@ use crate::config::config;
 
 use super::error::RpcResult;
 
-async fn nlp_client() -> NlpClient<Channel> {
+pub async fn nlp_client() -> NlpClient<Channel> {
     static NLP_CLIENT: OnceCell<NlpClient<Channel>> = OnceCell::const_new();
     NLP_CLIENT
         .get_or_init(|| async {
@@ -49,7 +49,7 @@ PaaS 平台即服务
 SaaS 软件即服务
 FaaS 函数即服务
 aa 即 as a"#.to_string(),
-            region: "物联网".to_string(),
+            field: "物联网".to_string(),
         };
         let resp = client.ner(req).await.unwrap().into_inner();
         println!("{}", resp.ner_ret)

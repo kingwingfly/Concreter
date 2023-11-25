@@ -74,8 +74,19 @@
 
 ### Built With
 
+* [![Rust][Rust]][Rust-url]
+* [![Python][Python]][Python-url]
+* [![typescript][typescript]][typescript-url]
+* [![gRPC][gRPC]][gRPC-url]
+* [![docker][docker]][docker-url]
+* [![postgresql][postgresql]][postgresql-url]
+* [![agdb][agdb]][agdb-url]
+* [![openai][openai]][openai-url]
 * [![Next][Next.js]][Next-url]
 * [![React][React.js]][React-url]
+* [![reveal][reveal]][reveal-url]
+* [![three][three]][three-url]
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -87,10 +98,12 @@
 Here's how you can init and start the project.
 
 ### Prerequisites
-- Postgres data base
+- Postgres database
+- AgDb database
+- Python gRPC server
 
 #### Postgres
-If you wanana use Postgres on your local machine, you can follow the steps below.
+If you wanna use Postgres on your local machine, you can follow the steps below.
 
 ```sh
 # Init a Postgres database with the following settings:
@@ -100,21 +113,23 @@ initdb -D /path/to/pgdata --locale=en_US.UTF-8 -U $USER -W
 pg_ctl -D /path/to/pgdata -l /path/to/log.log start
 
 # Create database:
-createdb concreter -O $USER
+createdb app_db -O $USER
 
 # Set the PgUrl environment variable:
-export PG_URL="postgres://app_user:dev_only_pwd@localhost/app_db"
+export PG_URL="postgres://$USER:password@localhost/app_db"
 
-# Follows is the commands to end the service:
+# Follows is the commands to end and clean the service:
 pg_ctl -D /path/to/pgdata stop
 rm -rf /path/to/pgdata
 ```
 
-If you wanana use Postgres with docker, you can follow the steps below.
+If you wanna use Postgres with docker, you can follow the steps below.
 ```sh
+docker pull postgres
+
 docker run --name postgres -e POSTGRES_PASSWORD=password -p 5432:5432 -d postgres
 
-export PgUrl=postgres://postgres:password@localhost:5432/postgres
+export PG_URL=postgres://postgres:password@localhost:5432/postgres
 
 # To end the service:
 docker stop postgres
@@ -131,15 +146,18 @@ export AG_FILE="/Users/louis/web/Concreter/agdata/db_test.ahdb"
 ```
 
 #### gRPC
-To enable symbolic computation, I use python's [`sympy`](https://docs.sympy.org/latest/index.html). For time limitation, I don't have enough time explore `pyO3`, so I just use `gRPC` to interact with python in Rust.
+To enable symbolic computation, I use python's [`sympy`](https://docs.sympy.org/latest/index.html). For time limitation, I don't have enough time to explore `pyO3`, so I just use `gRPC` to interact with python in Rust.
 
-I suggest use docker:
+I suggest using docker:
 ```sh
+# set env variables
+TODO
+
 # At the root of the project, run:
 docker build -t rpc-py .
 docker run -it -p 50051:50051 -v ./proto:/usr/src/app/proto -v ./src_py:/usr/src/app/src_py --rm --name rpc-py rpc-py
 ```
-You can also choose to run on your machine. But python's rpc cannot well-support MacOS M1 now. And the python version `sympy` supports is up to `3.10`.
+You can also choose to run on your host machine. But python's rpc cannot well-support ARM Mac now. And the python version `sympy` supports is up to `3.10`.
 
 To start the python's gRPC server, you can run the following command:
 ```sh
@@ -151,11 +169,11 @@ conda create -n py310 python=3.10
 # activate the virtual environment
 source venv/bin/activate
 # or
-conda activate py311
+conda activate py310
 
 # install the dependencies
 pip install -r requirements.txt
-# For Arm Mac, use
+# For ARM Mac, use
 pip install socksio
 conda install --file requirements.txt
 pip install --upgrade openai
@@ -163,7 +181,7 @@ pip install --upgrade openai
 # generate the gRPC python code
 export PB="./src_py" && python -m grpc_tools.protoc -I./proto --python_out=$PB --pyi_out=$PB --grpc_python_out=$PB proto/sym.proto
 
-# set server address and start the server
+# set server address, env varibles and start the server
 Todo
 
 # Ctrl + C to end the service, and deactivate the virtual environment
@@ -171,7 +189,7 @@ deactivate
 # or
 conda deactivate
 ```
-For both method, you may need proxy configured. For docker, the host network should set proxy. For local machine, set the proxy in `src_py/openai_utils.py`:
+For both methods, you may need proxy configured. For docker, the host network should set proxy. For local machine, set the proxy in `src_py/openai_utils.py`:
 ```python
 client = OpenAI(
     # In docker, do not need to set proxy, for it uses host network which does.
@@ -200,7 +218,7 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 <!-- ROADMAP -->
 ## Roadmap
 
-- [ ] Feature 1
+- [ ] Use [SeaORM](https://github.com/SeaQL/sea-orm)
 - [ ] Feature 2
 - [ ] Feature 3
     - [ ] Nested Feature
@@ -275,7 +293,30 @@ Project Link: [https://github.com/kingwingfly/Concreter](https://github.com/king
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/linkedin_username
 [product-screenshot]: images/screenshot.png
+
+[Rust]: https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=Rust&logoColor=orange
+[Rust-url]: https://www.rust-lang.org
+[Python]: https://img.shields.io/badge/Python-000000?style=for-the-badge&logo=Python&logoColor=blue
+[Python-url]: https://www.python.org
+[axum]: https://img.shields.io/badge/axum-000000?style=for-the-badge&logo=axum&logoColor=white
+[axum-url]: https://github.com/tokio-rs/axum
+[typescript]: https://img.shields.io/badge/typescript-000000?style=for-the-badge&logo=typescript&logoColor=blue
+[typescript-url]: https://www.typescriptlang.org
+[gRPC]: https://img.shields.io/badge/gRPC-000000?style=for-the-badge&logo=gRPC&logoColor=yello
+[gRPC-url]: https://grpc.io
+[docker]: https://img.shields.io/badge/docker-000000?style=for-the-badge&logo=docker&logoColor=blue
+[docker-url]: https://www.docker.com
+[postgresql]: https://img.shields.io/badge/postgresql-000000?style=for-the-badge&logo=postgresql&logoColor=blue
+[postgresql-url]: https://www.postgresql.org
+[agdb]: https://img.shields.io/badge/agdb-000000?style=for-the-badge&logo=agdb&logoColor=brown
+[agdb-url]: https://github.com/agnesoft/agdb
+[openai]: https://img.shields.io/badge/openai-000000?style=for-the-badge&logo=openai&logoColor=pink
+[openai-url]: https://openai.com
 [Next.js]: https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
 [Next-url]: https://nextjs.org/
 [React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
 [React-url]: https://reactjs.org/
+[reveal]: https://img.shields.io/badge/reveal-000000?style=for-the-badge&logo=revealdotjs&logoColor=yellow
+[reveal-url]: https://revealjs.com
+[three]: https://img.shields.io/badge/three-000000?style=for-the-badge&logo=threedotjs&logoColor=yellow
+[three-url]: https://threejs.org/docs/#manual/en/introduction/Installation

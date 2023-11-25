@@ -7,7 +7,7 @@ service Nlp {
 
 message NerRequest {
     string text = 1;
-    string region = 2;
+    string field = 2;
 }
 
 message NerReply {

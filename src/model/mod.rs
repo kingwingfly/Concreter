@@ -3,6 +3,7 @@ mod edge;
 mod macros;
 mod node;
 mod pg;
+mod store;
 
 mod error;
 
@@ -11,6 +12,7 @@ pub use edge::*;
 pub use error::*;
 pub use node::*;
 pub use pg::*;
+pub use store::*;
 
 use agdb::{Db, QueryBuilder, QueryError};
 use snafu::ResultExt;
@@ -48,7 +50,9 @@ fn init_agdb() -> DbResult<Db> {
     let mut agdb = Db::new(filename)?;
 
     agdb.transaction_mut(|t| -> Result<(), QueryError> {
-        for name in ["root", "articles", "users", "words", "formulas", "comments"] {
+        for name in [
+            "root", "articles", "users", "entities", "formulas", "comments",
+        ] {
             match t.exec_mut(&QueryBuilder::insert().nodes().aliases(name).query()) {
                 Ok(_) => {
                     t.exec_mut(&QueryBuilder::insert().edges().from("root").to(name).query())?;

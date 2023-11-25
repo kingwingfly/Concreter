@@ -32,13 +32,14 @@ dotenv = "0.15.0"
 # error
 snafu = {version = "0.7.5", features = ["std", "rust_1_61"]}
 # time
-chrono = {version = "0.4", features = []}
+chrono = {version = "0.4", features = ["serde"]}
 time = "0.3.30"
 # tracing
 tracing = "0.1.40"
 tracing-subscriber = { version = "^0.3", features = ["env-filter"] }
 url = "2.4.1"
 # other
+regex = "1.10.2"
 
 [build-dependencies]
 tonic-build = {version = "^0.10"}

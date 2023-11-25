@@ -24,82 +24,35 @@ async fn main() -> Result<()> {
     let after_login_test = hc.do_get("/api/rpc");
     after_login_test.await?.print().await?;
 
-    // -- Create Tasks
-    // let mut task_ids: Vec<i64> = Vec::new();
-    // for i in 0..=4 {
-    //     let req_create_task = hc.do_post(
-    //         "/api/rpc",
-    //         json!({
-    //             "id": 1,
-    //             "method": "create_task",
-    //             "params": {
-    //                 "data": {
-    //                     "title": format!("task AAA {i}")
-    //                 }
-    //             }
-    //         }),
-    //     );
-    //     let result = req_create_task.await?;
-    //     task_ids.push(result.json_value::<i64>("/result/id")?);
-    // }
-
-    // -- Update first Task
-    // let req_update_task = hc.do_post(
-    //     "/api/rpc",
+    // let req_logoff = hc.do_post(
+    //     "/api/logoff",
     //     json!({
-    //         "id": 1,
-    //         "method": "update_task",
-    //         "params": {
-    //             "id": task_ids[0],
-    //             "data": {
-    //                 "title": "task BB"
-    //             }
-    //         }
+    //         "logoff": true
     //     }),
     // );
-    // req_update_task.await?.print().await?;
+    // req_logoff.await?.print().await?;
 
-    // -- Delete second Task
-    // let req_delete_task = hc.do_post(
-    //     "/api/rpc",
+    // let register = hc.do_post(
+    //     "/api/register",
     //     json!({
-    //         "id": 1,
-    //         "method": "delete_task",
-    //         "params": {
-    //             "id": task_ids[1] // Second task
-    //         }
+    //         "username": "demo2",
+    //         "pwd": "welcome"
     //     }),
     // );
-    // req_delete_task.await?.print().await?;
+    // register.await?.print().await?;
 
-    // -- List Tasks with filters
-    // let req_list_tasks = hc.do_post(
-    //     "/api/rpc",
-    //     json!({
-    //         "id": 1,
-    //         "method": "list_tasks",
-    //         "params": {
-    //             "filters": [{
-    //                 "title": {"$endsWith": "BB"},
-    //                 "done": false,
-    //             },{
-    //                 "id": {"$in": [task_ids[2], task_ids[3]]}
-    //             }],
-    //             "list_options": {
-    //                 "order_bys": "!id"
-    //             }
-    //         }
-    //     }),
-    // );
-    // req_list_tasks.await?.print().await?;
+    let req_article = hc.do_get("/api/article/1000");
+    req_article.await?.print().await?;
 
-    let req_logoff = hc.do_post(
-        "/api/logoff",
+    let req_upload = hc.do_post(
+        "/api/article",
         json!({
-            "logoff": true
+            "title": "upload test",
+            "content": "upload test",
+            "field": "science"
         }),
     );
-    req_logoff.await?.print().await?;
+    req_upload.await?.print().await?;
 
     Ok(())
 }
