@@ -7,19 +7,19 @@ use serde_json::json;
 async fn main() -> Result<()> {
     let hc = httpc_test::new_client("http://localhost:8080")?;
 
-    hc.do_get("/index.html").await?.print().await?;
+    // hc.do_get("/index.html").await?.print().await?;
 
     // let before_login_test = hc.do_get("/api/rpc");
     // before_login_test.await?.print().await?;
 
-    // let req_login = hc.do_post(
-    //     "/api/login",
-    //     json!({
-    //         "username": "demo1",
-    //         "pwd": "welcome"
-    //     }),
-    // );
-    // req_login.await?.print().await?;
+    let req_login = hc.do_post(
+        "/api/login",
+        json!({
+            "username": "demo1",
+            "pwd": "welcom"
+        }),
+    );
+    req_login.await?.print().await?;
 
     // let after_login_test = hc.do_get("/api/rpc");
     // after_login_test.await?.print().await?;

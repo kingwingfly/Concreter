@@ -29,7 +29,8 @@ use crate::{
     web::{
         mw_auth::{mw_ctx_require, mw_ctx_resolve},
         mw_res_map::mw_reponse_map,
-        routes_article, routes_entity, routes_formula, routes_login, routes_static, rpc,
+        routes_article, routes_entity, routes_formula, routes_login, routes_static, routes_user,
+        rpc,
     },
 };
 
@@ -48,21 +49,21 @@ async fn main() -> AppResult<()> {
     let mm = ModelManager::new().await?;
 
     // -- Define Routes
-    let routes_rpc = rpc::routes(mm.clone()).route_layer(from_fn(mw_ctx_require));
 
     let routes_all = Router::new()
         .merge(routes_login::routes(mm.clone()))
         .merge(routes_article::routes(mm.clone()))
         .merge(routes_entity::routes(mm.clone()))
         .merge(routes_formula::routes(mm.clone()))
-        .nest("/api", routes_rpc)
+        .merge(routes_user::routes(mm.clone()))
+        .nest("/api", rpc::routes(mm.clone()))
         .layer(
             ServiceBuilder::new()
                 .layer(CookieManagerLayer::new())
                 .layer(from_fn_with_state(mm.clone(), mw_ctx_resolve))
                 .layer(map_response(mw_reponse_map)),
         )
-        .fallback_service(routes_static::serve_dir());
+        .merge(routes_static::routes());
 
     // region:    --- Start Server
     let addr = SocketAddr::from(([127, 0, 0, 1], 8080));

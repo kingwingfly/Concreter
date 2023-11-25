@@ -72,6 +72,7 @@ async fn api_login_handler(
 #[derive(Debug, Deserialize)]
 struct LoginPayload {
     username: String,
+    #[serde(alias = "password")]
     pwd: String,
 }
 // endregion: --- Login

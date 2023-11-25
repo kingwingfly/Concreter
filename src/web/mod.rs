@@ -6,6 +6,7 @@ pub mod routes_entity;
 pub mod routes_formula;
 pub mod routes_login;
 pub mod routes_static;
+pub mod routes_user;
 pub mod rpc;
 
 pub use error::*;
