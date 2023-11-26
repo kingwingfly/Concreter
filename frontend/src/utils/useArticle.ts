@@ -9,8 +9,8 @@ export interface Article {
     formulas?: number[],
 }
 
-export const useArticle = () => {
-    const { data } = useSWR('/api/article', fetcher)
+export const useArticle = (id: string) => {
+    const { data } = useSWR(`/api/article/${id}`, fetcher)
     let article: Article = data
 
     return article
@@ -20,6 +20,7 @@ export interface ArticleInfo {
     id: number
     title: string,
     fragment: string,
+    field: string,
 }
 
 export const useArticles = () => {

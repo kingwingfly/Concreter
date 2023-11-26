@@ -1,5 +1,5 @@
-use agdb::{DbId, DbUserValue, QueryBuilder, QueryError, QueryIds};
-use sqlx::{postgres::PgRow, Encode, FromRow, Postgres, Row, Type};
+use agdb::{CountComparison, DbId, DbUserValue, QueryBuilder, QueryError, QueryId, QueryIds};
+use sqlx::{postgres::PgRow, Decode, Encode, FromRow, Postgres, Row, Type};
 
 use crate::ctx::Ctx;
 
@@ -53,6 +53,39 @@ pub trait AgdbNodeBmc {
         I: Into<QueryIds>,
     {
         let q = QueryBuilder::select().ids(ids).query();
+        let node = mm.agdb().read().await.exec(&q)?.try_into()?;
+        Ok(node)
+    }
+
+    /// Get node from `pre`, where node `has` property `next` and distance is 2
+    async fn get_next<I1, I2>(
+        _ctx: &Ctx,
+        mm: &ModelManager,
+        pre: I1,
+        next: I2,
+    ) -> DbResult<Vec<Self::Node>>
+    where
+        I1: Into<QueryId>,
+        I2: AsRef<str>,
+    {
+        let q = QueryBuilder::select()
+            .ids(
+                QueryBuilder::search()
+                    .depth_first()
+                    .from(pre)
+                    .where_()
+                    .keys(vec![next.as_ref().into()])
+                    .and()
+                    .distance(CountComparison::Equal(2))
+                    .and()
+                    .beyond()
+                    .where_()
+                    .keys(vec!["has".into()])
+                    .or()
+                    .node()
+                    .query(),
+            )
+            .query();
         let node = mm.agdb().read().await.exec(&q)?.try_into()?;
         Ok(node)
     }
@@ -129,6 +162,39 @@ pub trait PgdbBmc {
         .bind(value)
         .fetch_one(mm.pgdb())
         .await?)
+    }
+
+    /// Return all rows of the table matching the field=value
+    async fn list_by<D, F, V>(_ctx: &Ctx, mm: &ModelManager, field: F, value: V) -> DbResult<Vec<D>>
+    where
+        for<'r> D: FromRow<'r, PgRow> + Send + Sync + Unpin,
+        F: AsRef<str>,
+        for<'q> V: Send + Encode<'q, Postgres> + Type<Postgres>,
+    {
+        Ok(sqlx::query_as(&format!(
+            "SELECT * FROM {} WHERE {} = $1",
+            Self::TABLE,
+            field.as_ref()
+        ))
+        .bind(value)
+        .fetch_all(mm.pgdb())
+        .await?)
+    }
+
+    /// Return field of the table matching the field=value
+    async fn list_all<D, F>(_ctx: &Ctx, mm: &ModelManager, field: F) -> DbResult<Vec<D>>
+    where
+        for<'q> D: Type<Postgres> + Decode<'q, Postgres>,
+        F: AsRef<str>,
+    {
+        Ok(
+            sqlx::query(&format!("SELECT {} FROM {}", field.as_ref(), Self::TABLE))
+                .fetch_all(mm.pgdb())
+                .await?
+                .into_iter()
+                .map(|row| row.try_get(0).unwrap())
+                .collect::<Vec<D>>(),
+        )
     }
 
     /// Delete the rows matching the field=value

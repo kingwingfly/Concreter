@@ -6,6 +6,7 @@ use agdb::{DbId, UserValue};
 pub struct CommentAg {
     db_id: Option<DbId>,
     pg_id: i64,
+    comment: i64,
 }
 
 pub struct CommentAgBmc;

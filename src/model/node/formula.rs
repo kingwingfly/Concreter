@@ -6,6 +6,7 @@ use agdb::{DbId, UserValue};
 pub struct FormulaAg {
     pub db_id: Option<DbId>,
     pub pg_id: i64,
+    pub formula: i64,
 }
 
 pub struct FormulaAgBmc;
