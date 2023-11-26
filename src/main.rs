@@ -27,10 +27,8 @@ use tracing_subscriber::EnvFilter;
 use crate::{
     model::ModelManager,
     web::{
-        mw_auth::{mw_ctx_require, mw_ctx_resolve},
-        mw_res_map::mw_reponse_map,
-        routes_article, routes_auth, routes_entity, routes_formula, routes_static, routes_user,
-        rpc,
+        mw_auth::mw_ctx_resolve, mw_res_map::mw_reponse_map, routes_article, routes_auth,
+        routes_entity, routes_formula, routes_static, routes_user, rpc,
     },
 };
 
