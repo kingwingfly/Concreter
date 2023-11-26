@@ -4,6 +4,7 @@ import { FormEvent } from "react"
 import Input from "./input"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+import SubmitBtn from "./btn"
 
 
 export default function PostForm(props: { url: string, keys: string[], btn: string }) {
@@ -33,11 +34,7 @@ export default function PostForm(props: { url: string, keys: string[], btn: stri
                         </div>
                     )
                 })}
-                <button type="submit"
-                    className="rounded-md bg-indigo-500 mt-4 w-fit px-3.5 py-2 text-sm font-semibold text-white shadow-sm 
-                    hover:bg-indigo-400 
-                    focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
-                > {props.btn} </button>
+                <SubmitBtn name={props.btn} />
                 <div>{ret}</div>
             </form>
         </>

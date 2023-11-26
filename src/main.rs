@@ -29,7 +29,7 @@ use crate::{
     web::{
         mw_auth::{mw_ctx_require, mw_ctx_resolve},
         mw_res_map::mw_reponse_map,
-        routes_article, routes_entity, routes_formula, routes_login, routes_static, routes_user,
+        routes_article, routes_auth, routes_entity, routes_formula, routes_static, routes_user,
         rpc,
     },
 };
@@ -51,7 +51,7 @@ async fn main() -> AppResult<()> {
     // -- Define Routes
 
     let routes_all = Router::new()
-        .merge(routes_login::routes(mm.clone()))
+        .merge(routes_auth::routes(mm.clone()))
         .merge(routes_article::routes(mm.clone()))
         .merge(routes_entity::routes(mm.clone()))
         .merge(routes_formula::routes(mm.clone()))

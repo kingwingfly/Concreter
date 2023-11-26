@@ -1,9 +1,11 @@
-import Profile from "@/components/profile";
+import { ArticleList } from "@/components/article";
+import NaviBar from "@/components/navibar";
 
 export default function Home() {
   return (
     <>
-      <Profile />
+      <NaviBar />
+      <ArticleList />
     </>
   )
 }
