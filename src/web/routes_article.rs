@@ -1,20 +1,20 @@
-use axum::{
-    extract::{Path, State},
-    middleware::from_fn,
-    routing::{get, post},
-    Json, Router,
-};
-use serde::{Deserialize, Serialize};
-use tracing::debug;
-
 use crate::{
-    anylize::{Analyzer, ArticleAnalyzer},
+    analyze::{Analyzer, ArticleAnalyzer},
     ctx::Ctx,
     model::{
         AgdbNodeBmc, ArticleAgBmc, ArticleNew, ArticlePg, ArticlePgBmc, EntityAg, EntityAgBmc,
         ModelManager, PgdbBmc,
     },
 };
+use axum::{
+    extract::{Multipart, Path, State},
+    middleware::from_fn,
+    routing::{get, post},
+    Json, Router,
+};
+use futures_util::stream::StreamExt;
+use serde::{Deserialize, Serialize};
+use tracing::debug;
 
 use super::{mw_auth::mw_ctx_require, ArticleResult, AuthResult};
 
@@ -48,33 +48,38 @@ async fn api_article_get_handler(
 async fn api_article_anylize_handler(
     State(mm): State<ModelManager>,
     ctx: AuthResult<Ctx>,
-    Json(payload): Json<ArticleAnylizePayload>,
+    mut multipart: Multipart,
 ) -> ArticleResult<()> {
     debug!("{:<12} - api_article_anylize_handler", "HANDLER");
+    let (mut filename, mut content, mut field) = (None, None, None);
+    while let Some(mut field_) = multipart.next_field().await.unwrap() {
+        let name = field_.name().unwrap().to_string();
+        let data = field_.bytes().await.unwrap();
+        let s = String::from_utf8(data.to_vec()).unwrap();
+        match name.as_str() {
+            "filename" => filename = Some(s),
+            "content" => content = Some(s),
+            "field" => field = Some(s),
+            _ => {}
+        }
+    }
     let ctx = ctx.unwrap();
     let author = ctx.user_id();
-    let ArticleAnylizePayload {
-        title,
-        content,
-        field,
-    } = payload;
-    let new_article = ArticleNew {
-        title,
-        content,
-        field,
-        author,
-    };
-    tokio::spawn(async move {
-        let _ = ArticleAnalyzer::analyze(&ctx, &mm, new_article).await;
-    });
+    match (filename, content, field) {
+        (Some(filename), Some(content), Some(field)) => {
+            let new_article = ArticleNew {
+                title: filename,
+                content,
+                field,
+                author,
+            };
+            tokio::spawn(async move {
+                let _ = ArticleAnalyzer::analyze(&ctx, &mm, new_article).await;
+            });
+        }
+        _ => {}
+    }
     Ok(())
-}
-
-#[derive(Debug, Deserialize)]
-struct ArticleAnylizePayload {
-    title: String,
-    content: String,
-    field: String,
 }
 
 async fn api_article_ids_handler(State(mm): State<ModelManager>) -> Json<Vec<i64>> {
@@ -100,7 +105,10 @@ async fn api_article_list_handler(
         .map(|article| ArticleInfo {
             id: article.id,
             title: article.title,
-            fragment: article.content.chars().take(100).collect(),
+            fragment: match article.status.as_str() {
+                "finished" => article.content.chars().take(100).collect(),
+                s => s.to_owned(),
+            },
             field: article.field,
         })
         .collect();

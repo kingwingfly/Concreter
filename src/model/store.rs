@@ -12,8 +12,8 @@ use super::{
 };
 
 pub struct ToStore {
-    pg_id: i64,
-    ag_id: DbId,
+    pub pg_id: i64,
+    pub ag_id: DbId,
 }
 
 impl ToStore {

@@ -1,10 +1,12 @@
 mod article;
 mod error;
 
+use crate::config::config;
 pub use article::*;
 pub use error::*;
 use regex::Regex;
 use std::sync::OnceLock;
+use tokio::io::AsyncWriteExt;
 
 use crate::{
     ctx::Ctx,
@@ -18,8 +20,13 @@ pub trait Analyzer {
         let field = article.field.clone();
         let to_store = ToStore::new(ctx, mm, article).await?;
         Self::ner(ctx, mm, &to_store, &content, &field).await?;
-        Self::sym(ctx, mm, &to_store, &content).await?;
+        // Self::sym(ctx, mm, &to_store, &content).await?;
         to_store.finish(ctx, mm).await?;
+        let _ret = tokio::process::Command::new("sh")
+            .args(["-c", &format!("cd frontend && npm run build")])
+            .status()
+            .await
+            .ok();
         Ok(())
     }
 

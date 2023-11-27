@@ -1,4 +1,4 @@
-mod anylize;
+mod analyze;
 mod config;
 mod ctx;
 mod error;
@@ -28,7 +28,7 @@ use crate::{
     model::ModelManager,
     web::{
         mw_auth::mw_ctx_resolve, mw_res_map::mw_reponse_map, routes_article, routes_auth,
-        routes_entity, routes_formula, routes_static, routes_user, rpc,
+        routes_entity, routes_formula, routes_md, routes_static, routes_user, rpc,
     },
 };
 
@@ -51,8 +51,6 @@ async fn main() -> AppResult<()> {
     let routes_all = Router::new()
         .merge(routes_auth::routes(mm.clone()))
         .merge(routes_article::routes(mm.clone()))
-        .merge(routes_entity::routes(mm.clone()))
-        .merge(routes_formula::routes(mm.clone()))
         .merge(routes_user::routes(mm.clone()))
         .nest("/api", rpc::routes(mm.clone()))
         .layer(
@@ -61,6 +59,9 @@ async fn main() -> AppResult<()> {
                 .layer(from_fn_with_state(mm.clone(), mw_ctx_resolve))
                 .layer(map_response(mw_reponse_map)),
         )
+        .merge(routes_entity::routes(mm.clone()))
+        .merge(routes_formula::routes(mm.clone()))
+        .merge(routes_md::routes(mm.clone()))
         .merge(routes_static::routes());
 
     // region:    --- Start Server

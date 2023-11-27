@@ -12,6 +12,7 @@ pub struct ArticlePg {
     pub title: String,
     pub content: String,
     pub field: String,
+    pub status: String,
     pub created_at: chrono::DateTime<chrono::Local>,
     pub updated_at: chrono::DateTime<chrono::Local>,
 }
