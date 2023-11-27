@@ -14,7 +14,7 @@ export const ArticleContent = ({ id }: { id: string }) => {
     useEffect(
         () => {
             let deck = new Reveal({
-                plugins: [RevealMarkdown, RevealMath.MathJax3, RevealHighlight]
+                plugins: [RevealMarkdown, RevealMath.KaTeX, RevealHighlight]
             })
             deck.initialize({
                 embedded: true,

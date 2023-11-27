@@ -4,7 +4,7 @@ mod error;
 use crate::config::config;
 pub use article::*;
 pub use error::*;
-use regex::Regex;
+use regex::{Captures, Regex};
 use std::sync::OnceLock;
 use tokio::io::AsyncWriteExt;
 
@@ -15,9 +15,10 @@ use crate::{
 };
 
 pub trait Analyzer {
-    async fn analyze(ctx: &Ctx, mm: &ModelManager, article: ArticleNew) -> AnalyzeResult<()> {
+    async fn analyze(ctx: &Ctx, mm: &ModelManager, mut article: ArticleNew) -> AnalyzeResult<()> {
         let content = article.content.clone();
         let field = article.field.clone();
+        escape_formulas(&mut article.content); // use ` to wrap $$..$$, for reveal to recognize
         let to_store = ToStore::new(ctx, mm, article).await?;
         Self::ner(ctx, mm, &to_store, &content, &field).await?;
         // Self::sym(ctx, mm, &to_store, &content).await?;
@@ -85,6 +86,15 @@ fn extract_formulas(text: &str) -> Vec<String> {
     ret
 }
 
+fn escape_formulas(text: &mut String) {
+    static RE: OnceLock<Regex> = OnceLock::new();
+    let re =
+        RE.get_or_init(|| Regex::new(r"\$\$?(?P<formula>[\s\S]+?)\$\$?").expect("Invalid regex"));
+    *text = re
+        .replace_all(text, |cap: &Captures| format!("`{}`", &cap[0]))
+        .to_string();
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -106,5 +116,22 @@ $$
         let text = std::fs::read_to_string("examples/建筑智能施工技术.md").unwrap();
         let ret = extract_formulas(&text);
         dbg!(ret);
+    }
+
+    #[test]
+    fn escape_formulas_test() {
+        let mut text = r#"
+$$
+E = mc^2
+$$"#
+        .to_string();
+        escape_formulas(&mut text);
+        assert_eq!(
+            text,
+            r#"
+`$$
+E = mc^2
+$$`"#
+        );
     }
 }

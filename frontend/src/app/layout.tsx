@@ -15,7 +15,7 @@ export default function RootLayout(props: {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="flex items-center justify-center h-screen text-center">
+        <div className="flex items-center justify-center h-screen text-center overflow-auto">
           {props.children}
         </div>
       </body>

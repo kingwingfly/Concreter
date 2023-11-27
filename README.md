@@ -11,7 +11,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/kingwingfly/Concreter">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+    <img src="images/screenshot.png" alt="Logo" width="80" height="80">
   </a>
 
 <h3 align="center">Concreter</h3>
@@ -200,7 +200,7 @@ client = OpenAI(
 #### Frontend
 We use `nextjs` as the frontend framework. To start the frontend, you can run the following command:
 ```sh
-npm i && npm run build
+cd frontend && npm i && npm run build
 ```
 This will static export the frontend to `out` folder. Then:
 ```sh
@@ -211,14 +211,56 @@ To serve the frontend with `axum`.
 ### Installation
 Todo
 
+### Environment Variables
+Following are keys that not use but need for running. You can fill with random charactors.
+```
+# ./.env
+AccessKey_ID= # aliyun
+AccessKey_Secret= # aliyun
+API_KEY= # BaiduYun
+SECRET_KEY= # BaiduYun
+NLP_API_TOKEN= # NLP_API
+```
+`OPENAI_API_KEY` is the only key we use actually.
+```
+# ./env
+OPENAI_API_KEY="sk-xxx"
+```
+And there are config will be later use `k8s`
+```
+RUST_LOG="concreter=debug"
+
+## -- Secrets
+
+PG_URL="postgres://app_user:dev_only_pwd@localhost/app_db"
+AG_FILE="/Users/louis/web/Concreter/agdata/db_test.ahdb"
+
+SERVICE_PWD_KEY="JxLSSJZq-4XP9ugcw4I3sIa-lAjGRWZNA9BPwv8NIWkPR0Jmr21w_UUmFXxDDuDx4S3jOZLxAqnZ_qB8w8uoRA"
+
+SERVICE_TOKEN_KEY="0S0b8LnN0t5gnbbWLFZbhLRHJ2ySvbnVWfV-ypA9psFHkyyJ4Y5CQpK3KUODLCrmv3Xbvl7g9GvlncpQAE9U3A"
+SERVICE_TOKEN_DURATION_SEC="1800" # 30 minutes
+
+## -- ConfigMap
+SERVICE_WEB_FOLDER="frontend/out"
+RPC_ADDR="http://localhost:50051"
+```
+You can generate service key through `examples/gen_key.rs`
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 <!-- USAGE EXAMPLES -->
 ## Usage
+Ensure finished there steps:
+1. Set up postgresql and export PG_URL
+2. Set up agdb, and export AG_FILE
+3. Set up python grpc server, and export RPC_ADDR
+4. With server keys exported
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+Then you can setup the server by
+```
+cargo run --release
+```
+However, `k8s` and `docker` will support in the future, and the steps will be much more less certainly.
 
 _For more examples, please refer to the [Documentation](https://example.com)_
 
