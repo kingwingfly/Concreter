@@ -15,7 +15,6 @@ pub use pg::*;
 pub use store::*;
 
 use agdb::{Db, QueryBuilder, QueryError};
-use snafu::ResultExt;
 use sqlx::postgres::{PgPool, PgPoolOptions};
 use std::sync::Arc;
 use tokio::sync::RwLock;

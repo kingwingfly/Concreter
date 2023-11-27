@@ -1,7 +1,9 @@
 'use client'
 
 import { ArticleInfo, useArticle, useArticles } from "@/utils/useArticle"
+import { useEntities, useEntity } from "@/utils/useEntity"
 import Link from "next/link"
+import Entity from "./entity"
 
 export function ArticleList() {
     const articles = useArticles()
@@ -19,11 +21,15 @@ export function ArticleList() {
 
 export function ArticleView({ id }: { id: string }) {
     const article = useArticle(id)
+    const entities = useEntities(id)
     return (
         <>
-            <div className="max-w-2xl mx-auto mt-8 p-8 shadow-md rounded-md">
+            <div className="w-full mt-8 shadow-md rounded-md">
                 <h1 className="text-3xl font-bold mb-4">{article?.title}</h1>
                 <p className="">{article?.content}</p>
+            </div>
+            <div className="w-1/4 hover:w-1/2 transition-all">
+                {entities?.map((id) => <Entity key={id} id={id} />)}
             </div>
         </>
     )

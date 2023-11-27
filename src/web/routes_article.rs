@@ -5,15 +5,14 @@ use axum::{
     Json, Router,
 };
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
 use tracing::debug;
 
 use crate::{
     anylize::{Analyzer, ArticleAnalyzer},
     ctx::Ctx,
     model::{
-        AgdbNodeBmc, ArticleNew, ArticlePg, ArticlePgBmc, EntityAg, EntityAgBmc, ModelManager,
-        PgdbBmc,
+        AgdbNodeBmc, ArticleAgBmc, ArticleNew, ArticlePg, ArticlePgBmc, EntityAg, EntityAgBmc,
+        ModelManager, PgdbBmc,
     },
 };
 
@@ -26,7 +25,8 @@ pub fn routes(mm: ModelManager) -> Router {
         .route_layer(from_fn(mw_ctx_require))
         .route("/api/article/ids", get(api_article_ids_handler))
         .route("/api/article/:id", get(api_article_get_handler))
-        .route("/api/article/entities", post(api_entities_ids_handler))
+        .route("/api/article/:id/entities", get(api_entity_ids_handler))
+        .route("/api/article/:id/formulas", get(api_formula_ids_handler))
         .with_state(mm)
 }
 
@@ -116,23 +116,34 @@ struct ArticleInfo {
     field: String,
 }
 
-async fn api_entities_ids_handler(
+async fn api_entity_ids_handler(
     State(mm): State<ModelManager>,
-    Json(payload): Json<EntitiesPayload>,
-) -> Json<Vec<i64>> {
+    Path(id): Path<i64>,
+) -> ArticleResult<Json<Vec<i64>>> {
     debug!("{:<12} - api_entities_ids_handler", "HANDLER");
-    let EntitiesPayload { id } = payload;
     let ctx = Ctx::root_ctx();
+    let id = ArticleAgBmc::convert_pg_to_ag(&ctx, &mm, id).await?;
 
     let ids: Vec<EntityAg> = EntityAgBmc::get_next(&ctx, &mm, id, "entity")
         .await
         .unwrap();
     let ids = ids.into_iter().map(|node| node.pg_id).collect();
     let body = Json(ids);
-    body
+    Ok(body)
 }
 
-#[derive(Debug, Deserialize)]
-struct EntitiesPayload {
-    id: i64,
+async fn api_formula_ids_handler(
+    State(mm): State<ModelManager>,
+    Path(id): Path<i64>,
+) -> ArticleResult<Json<Vec<i64>>> {
+    debug!("{:<12} - api_entities_ids_handler", "HANDLER");
+    let ctx = Ctx::root_ctx();
+    let id = ArticleAgBmc::convert_pg_to_ag(&ctx, &mm, id).await?;
+
+    let ids: Vec<EntityAg> = EntityAgBmc::get_next(&ctx, &mm, id, "formula")
+        .await
+        .unwrap();
+    let ids = ids.into_iter().map(|node| node.pg_id).collect();
+    let body = Json(ids);
+    Ok(body)
 }

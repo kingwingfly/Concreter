@@ -2,6 +2,7 @@
 
 use anyhow::Result;
 use serde_json::json;
+use time::convert;
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -47,14 +48,6 @@ async fn main() -> Result<()> {
 
     let req_article_list = hc.do_get("/api/articles");
     req_article_list.await?.print().await?;
-
-    let req_entities = hc.do_post(
-        "/api/article/entities",
-        json!({
-            "id": 4576
-        }),
-    );
-    req_entities.await?.print().await?;
 
     // let req_upload = hc.do_post(
     //     "/api/article",

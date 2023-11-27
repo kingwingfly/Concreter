@@ -89,6 +89,25 @@ pub trait AgdbNodeBmc {
         let node = mm.agdb().read().await.exec(&q)?.try_into()?;
         Ok(node)
     }
+
+    async fn convert_pg_to_ag(_ctx: &Ctx, mm: &ModelManager, pg_id: i64) -> DbResult<i64> {
+        let q = QueryBuilder::select()
+            .values(vec!["db_id".into()])
+            .ids(
+                QueryBuilder::search()
+                    .from(Self::ALIAS)
+                    .limit(1)
+                    .where_()
+                    .distance(CountComparison::Equal(2))
+                    .and()
+                    .key("pg_id")
+                    .value(agdb::Comparison::Equal(pg_id.into()))
+                    .query(),
+            )
+            .query();
+        let ag_id = mm.agdb().read().await.exec(&q)?.ids()[0].0;
+        Ok(ag_id)
+    }
 }
 
 pub trait AgdbEdgeBmc {
