@@ -6,6 +6,6 @@ pub fn routes() -> Router {
     Router::new().nest_service(
         "/",
         ServeDir::new(&config().WEB_FOLDER)
-            .not_found_service(ServeFile::new(&format!("{}/404.html", config().WEB_FOLDER))),
+            .not_found_service(ServeFile::new(format!("{}/404.html", config().WEB_FOLDER))),
     )
 }

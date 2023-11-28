@@ -65,19 +65,16 @@ async fn api_article_anylize_handler(
     }
     let ctx = ctx.unwrap();
     let author = ctx.user_id();
-    match (filename, content, field) {
-        (Some(filename), Some(content), Some(field)) => {
-            let new_article = ArticleNew {
-                title: filename,
-                content,
-                field,
-                author,
-            };
-            tokio::spawn(async move {
-                let _ = ArticleAnalyzer::analyze(&ctx, &mm, new_article).await;
-            });
-        }
-        _ => {}
+    if let (Some(filename), Some(content), Some(field)) = (filename, content, field) {
+        let new_article = ArticleNew {
+            title: filename,
+            content,
+            field,
+            author,
+        };
+        tokio::spawn(async move {
+            let _ = ArticleAnalyzer::analyze(&ctx, &mm, new_article).await;
+        });
     }
     Ok(())
 }
@@ -87,8 +84,7 @@ async fn api_article_ids_handler(State(mm): State<ModelManager>) -> Json<Vec<i64
     let ctx = Ctx::root_ctx();
     let ids: Vec<i64> = ArticlePgBmc::list_all(&ctx, &mm, "id").await.unwrap();
     println!("{:?}", ids);
-    let body = Json(ids);
-    body
+    Json(ids)
 }
 
 async fn api_article_list_handler(
@@ -112,8 +108,7 @@ async fn api_article_list_handler(
             field: article.field,
         })
         .collect();
-    let body = Json(articles_info);
-    body
+    Json(articles_info)
 }
 
 #[derive(Debug, Serialize)]

@@ -24,7 +24,7 @@ pub trait Analyzer {
         // Self::sym(ctx, mm, &to_store, &content).await?;
         to_store.finish(ctx, mm).await?;
         let _ret = tokio::process::Command::new("sh")
-            .args(["-c", &format!("cd frontend && npm run build")])
+            .args(["-c", "cd frontend && npm run build"])
             .status()
             .await
             .ok();
@@ -81,7 +81,7 @@ fn extract_formulas(text: &str) -> Vec<String> {
         .get_or_init(|| Regex::new(r"\$\$?(?P<formula>[\s\S]+?)\$\$?").expect("Invalid regex"))
         .captures_iter(text)
         .filter_map(|cap| cap.name("formula").map(|f| f.as_str().trim().to_string()))
-        .filter(|s| s.contains("="))
+        .filter(|s| s.contains('='))
         .collect();
     ret
 }
