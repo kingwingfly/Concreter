@@ -17,7 +17,7 @@ Cargo.lock
 .env
 .venv/
 pg_db
-agdata
+ag_db
 log
 __pycache__
 src_py/pb

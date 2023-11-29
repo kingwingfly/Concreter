@@ -14,7 +14,6 @@ spec:
     - port: 8080
       targetPort: 8080
       nodePort: 30008
-      protocol: TCP
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -46,7 +45,7 @@ spec:
           imagePullPolicy: Never
           resources:
             limits:
-              memory: "128Mi"
+              memory: "256Mi"
               cpu: "500m"
           env:
             - name: RPC_ADDR
@@ -102,4 +101,4 @@ spec:
       volumes:
         - name: axum-persistent-storage
           hostPath:
-            path: /home/docker/app/ag_db
+            path: /Users/louis/web/Concreter/ag_db

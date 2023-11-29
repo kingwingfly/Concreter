@@ -18,6 +18,7 @@ use axum::{
     middleware::{from_fn_with_state, map_response},
     Router,
 };
+use config::config;
 use error::*;
 use tower::ServiceBuilder;
 use tower_cookies::CookieManagerLayer;
@@ -64,6 +65,17 @@ async fn main() -> AppResult<()> {
         .merge(routes_md::routes(mm.clone()))
         .merge(routes_static::routes());
 
+    tokio::spawn(async {
+        tokio::time::sleep(tokio::time::Duration::from_secs(5)).await;
+        let _ret = tokio::process::Command::new("sh")
+            .args([
+                "-c",
+                &format!("cd {} && npm run build", config().FRONTEND_FOLDER),
+            ])
+            .status()
+            .await
+            .ok();
+    });
     // region:    --- Start Server
     let addr = SocketAddr::from(([127, 0, 0, 1], 8080));
     info!("{:<12} - {addr}\n", "LISTENING");

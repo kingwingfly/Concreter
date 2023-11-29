@@ -95,6 +95,9 @@
 <!-- GETTING STARTED -->
 ## Getting Started
 
+// ToFix
+// Three ways: host docker k8s
+
 Here's how you can init and start the project.
 
 ### Prerequisites
@@ -272,6 +275,7 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 ## Roadmap
 
 - [ ] Use [SeaORM](https://github.com/SeaQL/sea-orm)
+- [ ] Fix: service dropped in minikube but works properly on docker kube
 - [ ] Feature 2
 - [ ] Feature 3
     - [ ] Nested Feature

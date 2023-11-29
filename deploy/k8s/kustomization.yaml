@@ -3,15 +3,15 @@ configMapGenerator:
     literals:
       - RPC_ADDR=http://rpc-py:50051
       - RUST_LOG=concreter=debug
-      - WEB_FOLDER =/usr/app/frontend/out
-      - FRONTEND_FOLDER =/usr/app/frontend
+      - WEB_FOLDER=/usr/app/frontend/out
+      - FRONTEND_FOLDER=/usr/app/frontend
 secretGenerator:
   - name: pg-pass
     literals:
       - password=postgres
   - name: api-keys
     literals:
-      - OPENAI_API_KEY=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
+      - OPENAI_API_KEY=
   - name: axum
     literals:
       - PG_URL=postgres://postgres:postgres@postgres:5432/postgres

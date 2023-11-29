@@ -62,4 +62,4 @@ spec:
       volumes:
         - name: postgres-persistent-storage
           hostPath:
-            path: /home/docker/app/pg_db
+            path: /Users/louis/web/Concreter/pg_db
