@@ -1,0 +1,104 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: axum
+  labels:
+    app: concreter
+    name: axum
+    role: backend
+spec:
+  selector:
+    name: axum
+  type: NodePort
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: 30008
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: axum
+  labels:
+    name: axum
+    app: concreter
+    role: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: axum
+      app: concreter
+      role: backend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        name: axum
+        app: concreter
+        role: backend
+    spec:
+      containers:
+        - name: axum
+          image: axum
+          imagePullPolicy: Never
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+          env:
+            - name: RPC_ADDR
+              valueFrom:
+                configMapKeyRef:
+                  name: axum
+                  key: RPC_ADDR
+            - name: RUST_LOG
+              valueFrom:
+                configMapKeyRef:
+                  name: axum
+                  key: RUST_LOG
+            - name: WEB_FOLDER
+              valueFrom:
+                configMapKeyRef:
+                  name: axum
+                  key: WEB_FOLDER
+            - name: FRONTEND_FOLDER
+              valueFrom:
+                configMapKeyRef:
+                  name: axum
+                  key: FRONTEND_FOLDER
+            - name: PG_URL
+              valueFrom:
+                secretKeyRef:
+                  name: axum
+                  key: PG_URL
+            - name: AG_FILE
+              valueFrom:
+                secretKeyRef:
+                  name: axum
+                  key: AG_FILE
+            - name: SERVICE_PWD_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: axum
+                  key: SERVICE_PWD_KEY
+            - name: SERVICE_TOKEN_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: axum
+                  key: SERVICE_TOKEN_KEY
+            - name: SERVICE_TOKEN_DURATION_SEC
+              valueFrom:
+                secretKeyRef:
+                  name: axum
+                  key: SERVICE_TOKEN_DURATION_SEC
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: axum-persistent-storage
+              mountPath: /usr/app/ag_db
+      volumes:
+        - name: axum-persistent-storage
+          hostPath:
+            path: /Users/louis/web/Concreter/ag_db

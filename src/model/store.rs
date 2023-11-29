@@ -12,14 +12,23 @@ use super::{
 };
 
 pub struct ToStore {
-    pg_id: i64,
-    ag_id: DbId,
+    pub pg_id: i64,
+    pub ag_id: DbId,
 }
 
 impl ToStore {
     pub async fn new(ctx: &Ctx, mm: &ModelManager, article: ArticleNew) -> DbResult<Self> {
         let pg_id = ArticlePgBmc::insert(ctx, mm, article).await?;
-        let ag_id = ArticleAgBmc::update(ctx, mm, ArticleAg { db_id: None, pg_id }).await?;
+        let ag_id = ArticleAgBmc::update(
+            ctx,
+            mm,
+            ArticleAg {
+                db_id: None,
+                pg_id,
+                article: 0,
+            },
+        )
+        .await?;
         Ok(Self { pg_id, ag_id })
     }
 
@@ -37,7 +46,16 @@ impl ToStore {
         attris: Value,
     ) -> DbResult<()> {
         let pg_id = EntityPgBmc::insert(ctx, mm, EntityNew { name, attris }).await?;
-        let entity_ag_id = EntityAgBmc::update(ctx, mm, EntityAg { db_id: None, pg_id }).await?;
+        let entity_ag_id = EntityAgBmc::update(
+            ctx,
+            mm,
+            EntityAg {
+                db_id: None,
+                pg_id,
+                entity: 0,
+            },
+        )
+        .await?;
         HasBmc::connect(ctx, mm, self.ag_id, entity_ag_id).await?;
         Ok(())
     }
@@ -50,7 +68,16 @@ impl ToStore {
         sym: String,
     ) -> DbResult<()> {
         let pg_id = FormulaPgBmc::insert(ctx, mm, FormulaNew { md, sym }).await?;
-        let formula_ag_id = FormulaAgBmc::update(ctx, mm, FormulaAg { db_id: None, pg_id }).await?;
+        let formula_ag_id = FormulaAgBmc::update(
+            ctx,
+            mm,
+            FormulaAg {
+                db_id: None,
+                pg_id,
+                formula: 0,
+            },
+        )
+        .await?;
         HasBmc::connect(ctx, mm, self.ag_id, formula_ag_id).await?;
         Ok(())
     }
@@ -80,6 +107,8 @@ mod test {
             )
             .await
             .unwrap();
+            let ag_id = to_store.ag_id;
+            dbg!(ag_id);
             let json = json!({
                 "name": {
                     "attr_name1": "attr1",
@@ -95,6 +124,10 @@ mod test {
                     .await
                     .unwrap();
             }
+            let entities = EntityAgBmc::get_next(&ctx, &mm, ag_id, "entity")
+                .await
+                .unwrap();
+            dbg!(entities);
         })
     }
 }

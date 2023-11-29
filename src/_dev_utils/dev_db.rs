@@ -1,10 +1,15 @@
 use std::{fs, path::PathBuf};
 
+use serde_json::json;
 use sqlx::{postgres::PgConnectOptions, ConnectOptions, PgConnection, Row};
 use tracing::info;
 use url::Url;
 
-use crate::pwd::{hash_pwd, ContentToHash};
+use crate::{
+    ctx::Ctx,
+    model::{ArticleNew, ModelManager, ToStore},
+    pwd::{hash_pwd, ContentToHash},
+};
 
 const PG_DEV_POSTGRES_URL: &str = "postgres://postgres:postgres@localhost:5432/postgres";
 const PG_DEV_APP_URL: &str = "postgres://app_user:dev_only_pwd@localhost:5432/app_db";
@@ -35,6 +40,7 @@ pub async fn init_dev_db() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     init_user_demo1(con).await?;
+    init_entity().await?;
 
     Ok(())
 }
@@ -57,6 +63,39 @@ async fn init_user_demo1(mut con: PgConnection) -> Result<(), Box<dyn std::error
         .bind(pwd_hashed)
         .execute(&mut con)
         .await?;
+    Ok(())
+}
+
+async fn init_entity() -> Result<(), Box<dyn std::error::Error>> {
+    let mm = ModelManager::new().await?;
+    let ctx = Ctx::root_ctx();
+    let to_store = ToStore::new(
+        &ctx,
+        &mm,
+        ArticleNew {
+            author: 1000,
+            title: "hello".to_owned(),
+            content: "world".to_owned(),
+            field: "".to_owned(),
+        },
+    )
+    .await
+    .unwrap();
+    let json = json!({
+        "name": {
+            "attr_name1": "attr1",
+            "attr_name2": {
+                "sub_attr_name1": "sub_attr1",
+                "sub_attr_name2": "sub_attr2"
+            }
+        }
+    });
+    for (name, attris) in json.as_object().unwrap() {
+        to_store
+            .add_entity(&ctx, &mm, name.to_owned(), attris.to_owned())
+            .await
+            .unwrap();
+    }
     Ok(())
 }
 

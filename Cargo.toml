@@ -7,32 +7,39 @@ license = "APACHE-2.0"
 
 [dependencies]
 # databse
-agdb = {version = "0.5.1", features = []}
-sqlx = {version = "0.7", features = ["runtime-tokio-rustls", "postgres", "macros", "uuid", "chrono"]}
+agdb = { version = "0.5.1", features = [] }
+sqlx = { version = "0.7", features = [
+    "runtime-tokio-rustls",
+    "postgres",
+    "macros",
+    "uuid",
+    "chrono",
+] }
 # service
-axum = {version = "^0.6", features = ["default"]}
-tower = {version = "0.4"}
+axum = { version = "^0.6", features = ["default", "multipart"] }
+tower = { version = "0.4" }
 tower-cookies = "0.9.0"
 tower-http = { version = "0.4.4", features = ["fs"] }
-tonic = {version = "^0.10"}
+tonic = { version = "^0.10" }
 prost = "0.12"
 # runtime
-tokio = {version = "1", features = ["full"]}
+tokio = { version = "1", features = ["full"] }
 async-trait = "0.1.74"
+futures-util = "0.3.29"
 # network
-reqwest = {version = "0.11", features = ["json"]}
+reqwest = { version = "0.11", features = ["json"] }
 # encode
 base64 = "0.21.5"
 hmac = "0.12.1"
 sha2 = "0.10.8"
 serde_json = "1.0.108"
 serde = "1.0.192"
-uuid = {version = "1.5.0", features = ["v4"]}
+uuid = { version = "1.5.0", features = ["v4"] }
 dotenv = "0.15.0"
 # error
-snafu = {version = "0.7.5", features = ["std", "rust_1_61"]}
+snafu = { version = "0.7.5", features = ["std", "rust_1_61"] }
 # time
-chrono = {version = "0.4", features = ["serde"]}
+chrono = { version = "0.4", features = ["serde"] }
 time = "0.3.30"
 # tracing
 tracing = "0.1.40"
@@ -42,9 +49,18 @@ url = "2.4.1"
 regex = "1.10.2"
 
 [build-dependencies]
-tonic-build = {version = "^0.10"}
+tonic-build = { version = "^0.10" }
 
 [dev-dependencies]
 anyhow = "1"
-httpc-test = {version = "^0.1", fearures = ["color-output"]}
-rand = "0.8" # For examples/gen-key
+httpc-test = { version = "^0.1", fearures = ["color-output"] }
+rand = "0.8"                                                   # For examples/gen-key
+
+[profile.release]
+lto = true
+opt-level = 3
+codegen-units = 1
+
+[features]
+nlp_ner = []
+baidu_ner = []

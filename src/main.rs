@@ -1,4 +1,4 @@
-mod anylize;
+mod analyze;
 mod config;
 mod ctx;
 mod error;
@@ -15,9 +15,10 @@ mod _dev_utils;
 use std::net::SocketAddr;
 
 use axum::{
-    middleware::{from_fn, from_fn_with_state, map_response},
+    middleware::{from_fn_with_state, map_response},
     Router,
 };
+use config::config;
 use error::*;
 use tower::ServiceBuilder;
 use tower_cookies::CookieManagerLayer;
@@ -27,9 +28,8 @@ use tracing_subscriber::EnvFilter;
 use crate::{
     model::ModelManager,
     web::{
-        mw_auth::{mw_ctx_require, mw_ctx_resolve},
-        mw_res_map::mw_reponse_map,
-        routes_article, routes_entity, routes_formula, routes_login, routes_static, rpc,
+        mw_auth::mw_ctx_resolve, mw_res_map::mw_reponse_map, routes_article, routes_auth,
+        routes_entity, routes_formula, routes_md, routes_static, routes_user, rpc,
     },
 };
 
@@ -42,28 +42,40 @@ async fn main() -> AppResult<()> {
         .init();
 
     // -- FOR DEV ONLY
-    _dev_utils::init_dev().await;
+    // _dev_utils::init_dev().await;
 
     // Initialize ModelManager.
     let mm = ModelManager::new().await?;
 
     // -- Define Routes
-    let routes_rpc = rpc::routes(mm.clone()).route_layer(from_fn(mw_ctx_require));
 
     let routes_all = Router::new()
-        .merge(routes_login::routes(mm.clone()))
+        .merge(routes_auth::routes(mm.clone()))
         .merge(routes_article::routes(mm.clone()))
-        .merge(routes_entity::routes(mm.clone()))
-        .merge(routes_formula::routes(mm.clone()))
-        .nest("/api", routes_rpc)
+        .merge(routes_user::routes(mm.clone()))
+        .nest("/api", rpc::routes(mm.clone()))
         .layer(
             ServiceBuilder::new()
                 .layer(CookieManagerLayer::new())
                 .layer(from_fn_with_state(mm.clone(), mw_ctx_resolve))
                 .layer(map_response(mw_reponse_map)),
         )
-        .fallback_service(routes_static::serve_dir());
+        .merge(routes_entity::routes(mm.clone()))
+        .merge(routes_formula::routes(mm.clone()))
+        .merge(routes_md::routes(mm.clone()))
+        .merge(routes_static::routes());
 
+    tokio::spawn(async {
+        tokio::time::sleep(tokio::time::Duration::from_secs(5)).await;
+        let _ret = tokio::process::Command::new("sh")
+            .args([
+                "-c",
+                &format!("cd {} && npm run build", config().FRONTEND_FOLDER),
+            ])
+            .status()
+            .await
+            .ok();
+    });
     // region:    --- Start Server
     let addr = SocketAddr::from(([127, 0, 0, 1], 8080));
     info!("{:<12} - {addr}\n", "LISTENING");

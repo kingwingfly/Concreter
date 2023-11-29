@@ -6,6 +6,7 @@ use agdb::{DbId, UserValue};
 pub struct EntityAg {
     pub db_id: Option<DbId>,
     pub pg_id: i64,
+    pub entity: i64,
 }
 
 pub struct EntityAgBmc;

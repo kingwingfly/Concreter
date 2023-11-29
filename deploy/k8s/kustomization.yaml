@@ -1,0 +1,25 @@
+configMapGenerator:
+  - name: axum
+    literals:
+      - RPC_ADDR=http://rpc-py:50051
+      - RUST_LOG=concreter=debug
+      - WEB_FOLDER=/usr/app/frontend/out
+      - FRONTEND_FOLDER=/usr/app/frontend
+secretGenerator:
+  - name: pg-pass
+    literals:
+      - password=postgres
+  - name: api-keys
+    literals:
+      - OPENAI_API_KEY=
+  - name: axum
+    literals:
+      - PG_URL=postgres://postgres:postgres@postgres:5432/postgres
+      - AG_FILE=/usr/app/ag_db/ag.agdb
+      - SERVICE_PWD_KEY=JxLSSJZq-4XP9ugcw4I3sIa-lAjGRWZNA9BPwv8NIWkPR0Jmr21w_UUmFXxDDuDx4S3jOZLxAqnZ_qB8w8uoRA
+      - SERVICE_TOKEN_KEY=0S0b8LnN0t5gnbbWLFZbhLRHJ2ySvbnVWfV-ypA9psFHkyyJ4Y5CQpK3KUODLCrmv3Xbvl7g9GvlncpQAE9U3A
+      - SERVICE_TOKEN_DURATION_SEC=1800
+resources:
+  - postgres-deployment.yaml
+  - rpc-py-deployment.yaml
+  - axum-deployment.yaml

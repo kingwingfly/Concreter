@@ -14,7 +14,7 @@ impl IntoResponse for FormulaError {
     fn into_response(self) -> axum::response::Response {
         match self {
             FormulaError::FormulaNotFound { .. } => {
-                (axum::http::StatusCode::NOT_FOUND, "Article not found").into_response()
+                (axum::http::StatusCode::NOT_FOUND, "Formula not found").into_response()
             }
         }
     }

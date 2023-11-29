@@ -15,15 +15,18 @@ mod test {
     use super::*;
 
     #[test]
-    fn article_anylyzer_test() {
+    fn article_analyze_test() {
         run_test(async {
             let ctx = Ctx::root_ctx();
             let mm = init_test().await;
             let article = ArticleNew {
                 author: 1000,
                 title: "建筑智能施工技术".into(),
-                content: std::fs::read_to_string("examples/建筑智能施工技术.md").unwrap(),
-                field: "BIM 建筑 施工技术".into(),
+                content:
+                // std::fs::read_to_string("examples/建筑智能施工技术.md").unwrap()
+                "紧张刺激的飞行棋游戏，让你的飞机飞行到终点，成为胜利者。".to_string()
+                ,
+                field: "游戏".into(),
             };
             ArticleAnalyzer::analyze(&ctx, &mm, article).await.unwrap();
         })

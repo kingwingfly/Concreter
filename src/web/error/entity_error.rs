@@ -14,7 +14,7 @@ impl IntoResponse for EntityError {
     fn into_response(self) -> axum::response::Response {
         match self {
             EntityError::EntityNotFound { .. } => {
-                (axum::http::StatusCode::NOT_FOUND, "Article not found").into_response()
+                (axum::http::StatusCode::NOT_FOUND, "Entity not found").into_response()
             }
         }
     }
