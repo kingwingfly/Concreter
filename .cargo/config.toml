@@ -15,7 +15,7 @@ RUST_LOG = "concreter=debug"
 # i.e., Encryption not needed.
 
 PG_URL = "postgres://postgres:postgres@localhost:5432/postgres"
-AG_FILE = "/Users/louis/web/Concreter/agdata/db_test.ahdb"
+AG_FILE = "/Users/louis/web/Concreter/ag_db/ag.agdb"
 
 SERVICE_PWD_KEY = "JxLSSJZq-4XP9ugcw4I3sIa-lAjGRWZNA9BPwv8NIWkPR0Jmr21w_UUmFXxDDuDx4S3jOZLxAqnZ_qB8w8uoRA"
 
