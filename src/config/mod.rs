@@ -26,10 +26,13 @@ pub struct Config {
     pub TOKEN_DURATION_SEC: f64,
 
     // -- Baidu NER
+    #[cfg(feature = "baidu_ner")]
     pub API_KEY: String,
+    #[cfg(feature = "baidu_ner")]
     pub SECRET_KEY: String,
 
     // -- NLP_API
+    #[cfg(feature = "nlp_ner")]
     pub NLP_API_TOKEN: String,
 
     // -- Db
@@ -38,6 +41,7 @@ pub struct Config {
 
     // -- Web
     pub WEB_FOLDER: String,
+    pub FRONTEND_FOLDER: String,
 
     // --Rpc
     pub RPC_ADDR: String,
@@ -54,10 +58,13 @@ impl Config {
             TOKEN_DURATION_SEC: get_env_parse("SERVICE_TOKEN_DURATION_SEC")?,
 
             // -- Baidu NER
+            #[cfg(feature = "baidu_ner")]
             API_KEY: get_env("API_KEY")?,
+            #[cfg(feature = "baidu_ner")]
             SECRET_KEY: get_env("SECRET_KEY")?,
 
             // -- NLP_API
+            #[cfg(feature = "nlp_ner")]
             NLP_API_TOKEN: get_env("NLP_API_TOKEN")?,
 
             // -- Db
@@ -65,7 +72,8 @@ impl Config {
             AG_FILE: get_env("AG_FILE")?,
 
             // -- Web
-            WEB_FOLDER: get_env("SERVICE_WEB_FOLDER")?,
+            WEB_FOLDER: get_env("WEB_FOLDER")?,
+            FRONTEND_FOLDER: get_env("FRONTEND_FOLDER")?,
 
             // --Rpc
             RPC_ADDR: get_env("RPC_ADDR")?,

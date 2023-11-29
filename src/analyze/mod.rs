@@ -6,7 +6,6 @@ pub use article::*;
 pub use error::*;
 use regex::{Captures, Regex};
 use std::sync::OnceLock;
-use tokio::io::AsyncWriteExt;
 
 use crate::{
     ctx::Ctx,
@@ -24,7 +23,10 @@ pub trait Analyzer {
         // Self::sym(ctx, mm, &to_store, &content).await?;
         to_store.finish(ctx, mm).await?;
         let _ret = tokio::process::Command::new("sh")
-            .args(["-c", "cd frontend && npm run build"])
+            .args([
+                "-c",
+                &format!("cd {} && npm run build", config().FRONTEND_FOLDER),
+            ])
             .status()
             .await
             .ok();

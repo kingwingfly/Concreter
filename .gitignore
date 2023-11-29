@@ -16,7 +16,7 @@ Cargo.lock
 .DS_Store
 .env
 .venv/
-pgdata
+pg_db
 agdata
 log
 __pycache__

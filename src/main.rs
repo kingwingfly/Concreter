@@ -15,7 +15,7 @@ mod _dev_utils;
 use std::net::SocketAddr;
 
 use axum::{
-    middleware::{from_fn, from_fn_with_state, map_response},
+    middleware::{from_fn_with_state, map_response},
     Router,
 };
 use error::*;
@@ -41,7 +41,7 @@ async fn main() -> AppResult<()> {
         .init();
 
     // -- FOR DEV ONLY
-    _dev_utils::init_dev().await;
+    // _dev_utils::init_dev().await;
 
     // Initialize ModelManager.
     let mm = ModelManager::new().await?;

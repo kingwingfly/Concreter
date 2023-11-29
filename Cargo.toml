@@ -55,3 +55,12 @@ tonic-build = { version = "^0.10" }
 anyhow = "1"
 httpc-test = { version = "^0.1", fearures = ["color-output"] }
 rand = "0.8"                                                   # For examples/gen-key
+
+[profile.release]
+lto = true
+opt-level = 3
+codegen-units = 1
+
+[features]
+nlp_ner = []
+baidu_ner = []

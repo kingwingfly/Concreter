@@ -46,24 +46,24 @@ fn main() {
 
 --
 
-`$$
+$$
 \begin{aligned}
 y & = x ^ 2 + 2 x y + y ^ 2 \\
 & = (x + y) ^ 2
 \end{aligned}
-$$`
+$$
 
 --
 
 ### complex one
 
-`$$
+$$
 f(x)=
 \begin{cases}
 \sin x, & -π\le x \le π \\
 0, & \text{其他}
 \end{cases}
-$$`
+$$
 
 ---
 

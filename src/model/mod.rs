@@ -46,6 +46,8 @@ impl ModelManager {
 
 fn init_agdb() -> DbResult<Db> {
     let filename = &config().AG_FILE;
+
+    // TODO auto create db file if not exists.
     let mut agdb = Db::new(filename)?;
 
     agdb.transaction_mut(|t| -> Result<(), QueryError> {
