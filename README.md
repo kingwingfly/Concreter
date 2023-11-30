@@ -17,7 +17,7 @@
 <h3 align="center">Concreter</h3>
 
   <p align="center">
-    An app for students' learning concrete construction built with knowledge graph and symbolic computation
+    A web app to enhance document with chatGPT and sympy.
     <br />
     <a href="https://github.com/kingwingfly/Concreter"><strong>Explore the docs »</strong></a>
     <br />
@@ -79,6 +79,7 @@
 * [![typescript][typescript]][typescript-url]
 * [![gRPC][gRPC]][gRPC-url]
 * [![docker][docker]][docker-url]
+* [![kubernetes][kubernetes]][kubernetes-url]
 * [![postgresql][postgresql]][postgresql-url]
 * [![agdb][agdb]][agdb-url]
 * [![openai][openai]][openai-url]
@@ -127,7 +128,7 @@ rm -rf /path/to/pgdata
 #### AgDb
 [`AgDb`](https://github.com/agnesoft/agdb) is a graph database.
 
-You need give it a `.agdb` suffix file to init the database. For eample:
+You need give it a `.agdb` suffix file to init the database. For example:
 
 ```sh
 mkdir -p ag_db && touch ag_db/ag.agdb
@@ -135,7 +136,7 @@ export AG_FILE="path/to/ag.agdb"
 ```
 
 #### python gRPC
-To enable symbolic computation, I use python's [`sympy`](https://docs.sympy.org/latest/index.html). For time limitation, I don't have enough time to explore `pyO3`, so I just use `gRPC` to interact with python in Rust.
+To enable symbolic computation, I use python's [`sympy`](https://docs.sympy.org/latest/index.html). For time limitation, I don't have enough time to explore `pyO3`, so I just use `gRPC` to interact with python in Rust. Sympy only support python <= 3.10
 
 ```sh
 # create a virtual environment
@@ -236,14 +237,21 @@ Set the env variables in deploy/k8s:
 And load the images rpc-py, axum, postgres to your cluster
 ```sh
 cd deploy/k8s && kubectl apply -k ./
+# init the postgres, see blow
+# port-forward
+kubectl port-forward svc/axum-xxxx-xxx 8080:8080
 ```
 
 ### Initialize the postgres table
+Connect to db
 ```
 psql postgres://postgres:poretgres@localhost:5432/postgres
+# For those using k8s
+kubectl port-forward svc/postgres-xxx-xxx 5432:5432
 ```
-Run sql below
+Run sql in
 [init sql](sql/dev_init/01-schema.sql)
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -336,6 +344,8 @@ Project Link: [https://github.com/kingwingfly/Concreter](https://github.com/king
 [gRPC-url]: https://grpc.io
 [docker]: https://img.shields.io/badge/docker-000000?style=for-the-badge&logo=docker&logoColor=blue
 [docker-url]: https://www.docker.com
+[kubernetes]: https://img.shields.io/badge/kubernetes-000000?style=for-the-badge&logo=kubernetes&logoColor=blue
+[kubernetes-url]: https://kubernetes.io
 [postgresql]: https://img.shields.io/badge/postgresql-000000?style=for-the-badge&logo=postgresql&logoColor=blue
 [postgresql-url]: https://www.postgresql.org
 [agdb]: https://img.shields.io/badge/agdb-000000?style=for-the-badge&logo=agdb&logoColor=brown
@@ -344,7 +354,7 @@ Project Link: [https://github.com/kingwingfly/Concreter](https://github.com/king
 [openai-url]: https://openai.com
 [Next.js]: https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
 [Next-url]: https://nextjs.org/
-[React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
+[React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=white
 [React-url]: https://reactjs.org/
 [reveal]: https://img.shields.io/badge/reveal-000000?style=for-the-badge&logo=revealdotjs&logoColor=yellow
 [reveal-url]: https://revealjs.com
