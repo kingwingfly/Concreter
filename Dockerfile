@@ -27,7 +27,7 @@ COPY ./build.rs ./build.rs
 COPY ./Cargo.toml ./Cargo.toml
 COPY ./rust-toolchain.toml ./rust-toolchain.toml
 
-ENV NODE_VERSION=21.2.0
+ENV NODE_VERSION=20.10.0
 ENV NVM_DIR=/root/.nvm
 ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin/:${PATH}"
 
@@ -53,7 +53,7 @@ WORKDIR /usr/app
 
 COPY --from=axum_builder /usr/app /usr/app
 
-ENV NODE_VERSION=21.2.0
+ENV NODE_VERSION=20.10.0
 ENV NVM_DIR=/root/.nvm
 ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin/:${PATH}"
 
