@@ -94,20 +94,18 @@
 
 <!-- GETTING STARTED -->
 ## Getting Started
-
-// ToFix
-// Three ways: host docker k8s
-
 Here's how you can init and start the project.
 
-### Prerequisites
+Three ways: local docker k8s
+
+
+### Local
 - Postgres database
 - AgDb database
 - Python gRPC server
+- Axum server
 
 #### Postgres
-If you wanna use Postgres on your local machine, you can follow the steps below.
-
 ```sh
 # Init a Postgres database with the following settings:
 initdb -D /path/to/pgdata --locale=en_US.UTF-8 -U $USER -W
@@ -126,52 +124,24 @@ pg_ctl -D /path/to/pgdata stop
 rm -rf /path/to/pgdata
 ```
 
-If you wanna use Postgres with docker, you can follow the steps below.
-```sh
-docker pull postgres
-
-docker run --name postgres -e POSTGRES_PASSWORD=password -p 5432:5432 -d postgres
-
-export PG_URL=postgres://postgres:password@localhost:5432/postgres
-
-# To end the service:
-docker stop postgres
-docker rm postgres
-```
-
 #### AgDb
 [`AgDb`](https://github.com/agnesoft/agdb) is a graph database.
 
 You need give it a `.agdb` suffix file to init the database. For eample:
 
 ```sh
-export AG_FILE="/Users/louis/web/Concreter/agdata/db_test.ahdb"
+mkdir -p ag_db && touch ag_db/ag.agdb
+export AG_FILE="path/to/ag.agdb"
 ```
 
-#### gRPC
+#### python gRPC
 To enable symbolic computation, I use python's [`sympy`](https://docs.sympy.org/latest/index.html). For time limitation, I don't have enough time to explore `pyO3`, so I just use `gRPC` to interact with python in Rust.
 
-I suggest using docker:
-```sh
-# set env variables
-TODO
-
-# At the root of the project, run:
-docker build -t rpc-py .
-docker run -it -p 50051:50051 -v ./proto:/usr/src/app/proto -v ./src_py:/usr/src/app/src_py --rm --name rpc-py rpc-py
-```
-You can also choose to run on your host machine. But python's rpc cannot well-support ARM Mac now. And the python version `sympy` supports is up to `3.10`.
-
-To start the python's gRPC server, you can run the following command:
 ```sh
 # create a virtual environment
-python3 -m venv ./venv
-# or
 conda create -n py310 python=3.10
 
 # activate the virtual environment
-source venv/bin/activate
-# or
 conda activate py310
 
 # install the dependencies
@@ -185,11 +155,12 @@ pip install --upgrade openai
 export PB="./src_py" && python -m grpc_tools.protoc -I./proto --python_out=$PB --pyi_out=$PB --grpc_python_out=$PB proto/sym.proto
 
 # set server address, env varibles and start the server
-Todo
+export OPENAI_API_KEY=sk-123456
+
+# Run gRPC service
+python ./src_py/main.py
 
 # Ctrl + C to end the service, and deactivate the virtual environment
-deactivate
-# or
 conda deactivate
 ```
 For both methods, you may need proxy configured. For docker, the host network should set proxy. For local machine, set the proxy in `src_py/openai_utils.py`:
@@ -199,91 +170,104 @@ client = OpenAI(
     http_client=Client(proxies="http://127.0.0.1:7890"), timeout=30, max_retries=0
 )
 ```
+#### fronted
+```sh
+cd frontend && npm i && cd ..
+export WEB_FOLDER=path/to/fronted/out
+export FRONTEND_FOLDER=path/to/frontend
+```
+
+#### start axum server
+```sh
+export RPC_ADDR=http://localhost:50051
+export SERVICE_PWD_KEY=   # you can gernerate using
+export SERVICE_TOKEN_KEY= # `cargo run --examples gen_key`
+export SERVICE_TOKEN_DURATION_SEC=1800  # in seconds
+cargo run
+```
+
+### Docker
+#### postgres
+```sh
+docker pull postgres
+docker run --name postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres
+export PG_URL=postgres://postgres:postgres@localhost:5432/postgres
+```
+#### Agdb
+```sh
+mkdir -p ag_db && touch ag_db/ag.agdb
+export AG_FILE="path/to/ag.agdb"
+```
+
+#### gRPC
+```sh
+# At the root of the project, run:
+docker build -t rpc-py --target=rpc-py .
+docker run -it -p 50051:50051 -e OPENAI_API_KEY=sk-123456 --rm --name rpc-py rpc-py
+```
 
 #### Frontend
-We use `nextjs` as the frontend framework. To start the frontend, you can run the following command:
 ```sh
-cd frontend && npm i && npm run build
+cd frontend && npm i && cd ..
+export WEB_FOLDER=path/to/fronted/out
+export FRONTEND_FOLDER=path/to/frontend
 ```
-This will static export the frontend to `out` folder. Then:
+
+#### start axum server
 ```sh
-export SERVICE_WEB_FOLDER="./frontend/out"
+export RPC_ADDR=http://localhost:50051
+export SERVICE_PWD_KEY=   # you can gernerate using
+export SERVICE_TOKEN_KEY= # `cargo run --examples gen_key`
+export SERVICE_TOKEN_DURATION_SEC=1800  # in seconds
+cargo run
 ```
-To serve the frontend with `axum`.
 
-### Installation
-Todo
-
-### Environment Variables
-Following are keys that not use but need for running. You can fill with random charactors.
+### Kubernates
+#### build images
+```sh
+docker build -t rpc-py --target rpc-py .
+docker build -t axum --target axum .
+docker pull postgres
 ```
-# ./.env
-AccessKey_ID= # aliyun
-AccessKey_Secret= # aliyun
-API_KEY= # BaiduYun
-SECRET_KEY= # BaiduYun
-NLP_API_TOKEN= # NLP_API
-```
-`OPENAI_API_KEY` is the only key we use actually.
-```
-# ./env
-OPENAI_API_KEY="sk-xxx"
-```
-And there are config will be later use `k8s`
-```
-RUST_LOG="concreter=debug"
+Set the env variables in deploy/k8s:
+- secrets in kustomization.yaml
+- persist voloum in postgres-deployment.yaml and axum-deployment.yaml
 
-## -- Secrets
-
-PG_URL="postgres://app_user:dev_only_pwd@localhost/app_db"
-AG_FILE="/Users/louis/web/Concreter/agdata/db_test.ahdb"
-
-SERVICE_PWD_KEY="JxLSSJZq-4XP9ugcw4I3sIa-lAjGRWZNA9BPwv8NIWkPR0Jmr21w_UUmFXxDDuDx4S3jOZLxAqnZ_qB8w8uoRA"
-
-SERVICE_TOKEN_KEY="0S0b8LnN0t5gnbbWLFZbhLRHJ2ySvbnVWfV-ypA9psFHkyyJ4Y5CQpK3KUODLCrmv3Xbvl7g9GvlncpQAE9U3A"
-SERVICE_TOKEN_DURATION_SEC="1800" # 30 minutes
-
-## -- ConfigMap
-SERVICE_WEB_FOLDER="frontend/out"
-RPC_ADDR="http://localhost:50051"
+And load the images rpc-py, axum, postgres to your cluster
+```sh
+cd deploy/k8s && kubectl apply -k ./
 ```
-You can generate service key through `examples/gen_key.rs`
+
+### Initialize the postgres table
+```
+psql postgres://postgres:poretgres@localhost:5432/postgres
+```
+Run sql below
+[init sql](sql/dev_init/01-schema.sql)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- USAGE EXAMPLES -->
 ## Usage
-Ensure finished there steps:
-1. Set up postgresql and export PG_URL
-2. Set up agdb, and export AG_FILE
-3. Set up python grpc server, and export RPC_ADDR
-4. With server keys exported
+Register and login in.
 
-Then you can setup the server by
-```
-cargo run --release
-```
-However, `k8s` and `docker` will support in the future, and the steps will be much more less certainly.
-
-_For more examples, please refer to the [Documentation](https://example.com)_
-
+Upload a markdown and enter the field the markdown about, you can see examples at examples folder.
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 
 
 <!-- ROADMAP -->
 ## Roadmap
 
-- [ ] Use [SeaORM](https://github.com/SeaQL/sea-orm)
+- [ ] Use [SeaORM](https://github.com/SeaQL/sea-orm) and openDAL
 - [ ] Fix: service dropped in minikube but works properly on docker kube
-- [ ] Feature 2
-- [ ] Feature 3
-    - [ ] Nested Feature
+- [ ] Use vector storage
+- [ ] Train transformer latex-sympy translator
+- [ ] Formular sub
+- [ ] 3D model support
 
 See the [open issues](https://github.com/kingwingfly/Concreter/issues) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 
 
 <!-- CONTRIBUTING -->
@@ -319,17 +303,6 @@ Distributed under the Apache 2.0 License. See `LICENSE.txt` for more information
 Louis - 20200581@cqu.edu.cn
 
 Project Link: [https://github.com/kingwingfly/Concreter](https://github.com/kingwingfly/Concreter)
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- ACKNOWLEDGMENTS -->
-## Acknowledgments
-
-* []()
-* []()
-* []()
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
