@@ -155,7 +155,7 @@ pip install --upgrade openai
 # generate the gRPC python code
 export PB="./src_py" && python -m grpc_tools.protoc -I./proto --python_out=$PB --pyi_out=$PB --grpc_python_out=$PB proto/sym.proto
 
-# set server address, env varibles and start the server
+# set env varibles
 export OPENAI_API_KEY=sk-123456
 
 # Run gRPC service
@@ -223,7 +223,7 @@ export SERVICE_TOKEN_DURATION_SEC=1800  # in seconds
 cargo run
 ```
 
-### Kubernates
+### Kubernetes
 #### build images
 ```sh
 docker build -t rpc-py --target rpc-py .
@@ -244,10 +244,10 @@ kubectl port-forward svc/axum-xxxx-xxx 8080:8080
 
 ### Initialize the postgres table
 Connect to db
-```
-psql postgres://postgres:poretgres@localhost:5432/postgres
+```sh
+psql postgres://postgres:postgres@localhost:5432/postgres
 # For those using k8s
-kubectl port-forward svc/postgres-xxx-xxx 5432:5432
+kubectl port-forward svc/postgres 5432:5432
 ```
 Run sql in
 [init sql](sql/dev_init/01-schema.sql)
