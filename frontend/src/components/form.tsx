@@ -53,7 +53,7 @@ export const FileUploadComponent = () => {
         setSelectedFile(file || null);
     };
 
-    const handleFiledChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const handleFieldChange = (e: ChangeEvent<HTMLInputElement>) => {
         const field = e.target.value;
         setField(field);
     }
@@ -93,7 +93,7 @@ export const FileUploadComponent = () => {
                 placeholder="请输入领域"
                 className="col-span-1 mx-4 bg-white text-black dark:bg-black dark:text-white
                 ring-2 ring-blue-400 hover:ring-2 hover:ring-blue-600 font-bold py-2 px-4 rounded"
-                onChange={(e) => { e.preventDefault(); handleFiledChange(e) }}
+                onChange={(e) => { e.preventDefault(); handleFieldChange(e) }}
             />
             <button
                 className="mx-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
